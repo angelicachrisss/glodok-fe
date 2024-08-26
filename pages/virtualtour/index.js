@@ -5,7 +5,11 @@ const VirtualTour = () => {
   return (
     <Layout>
       <Box>
-        <Typography variant="h4" align="center" sx={{ mb: 2, mt: 3 }}>
+        <Typography
+          variant="h5"
+          align="center"
+          sx={{ mb: 2, mt: 3, fontWeight: 600 }}
+        >
           Virtual Tour
         </Typography>
         <Box

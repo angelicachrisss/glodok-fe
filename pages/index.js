@@ -16,14 +16,14 @@ const Home = () => {
     <Layout>
       <SwipedPictures />
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" align="center" sx={{ mb: 2 }}>
+        <Typography variant="h5" align="center" sx={{ mb: 2, fontWeight: 600 }}>
           Apakah Kamu Tau Sejarah Glodok?
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <Paper
               sx={{
-                backgroundColor: "white",
+                backgroundColor: "#D2D2CF",
                 p: 2,
                 borderRadius: "10px",
                 boxShadow: 10,
@@ -71,6 +71,7 @@ const Home = () => {
                 sx={{
                   textAlign: "justify", // Rata kanan kiri
                   textIndent: "1em", // Indentasi di awal paragraf
+                  mb: 2, // Margin bawah untuk jarak antar paragraf
                 }}
               >
                 Dari nama ”pancuran” akhirnya menjadi nama sebuah daerah yang
@@ -79,11 +80,17 @@ const Home = () => {
                 nama yakni Glodok dan Glodok Pancoran masih akrab di telinga
                 orang Jakarta, bahkan hingga ke luar Jakarta.
               </Typography>
+
+              <Typography> Sumber : Wikipedia</Typography>
             </Paper>
           </Grid>
         </Grid>
 
-        <Typography variant="h4" align="center" sx={{ mb: 2, mt: 3 }}>
+        <Typography
+          variant="h5"
+          align="center"
+          sx={{ mb: 2, mt: 3, fontWeight: 600 }}
+        >
           Video Sejarah Glodok
         </Typography>
 
