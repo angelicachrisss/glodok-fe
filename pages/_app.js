@@ -4,6 +4,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { GlobalStyles } from "@mui/material";
 import Head from "next/head"; // Import Head dari next/head
 import theme from "../src/theme";
+import { Toaster } from 'react-hot-toast';
 
 const globalStyles = {
   body: {
@@ -31,6 +32,7 @@ export default function MyApp({ Component, pageProps }) {
         <title>Pesona Glodok</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Toaster />
       <Component {...pageProps} />
     </ThemeProvider>
   );

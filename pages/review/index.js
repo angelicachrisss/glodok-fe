@@ -1,18 +1,30 @@
 import {
+  Alert,
   Box,
   Button,
+  Card,
+  CardContent,
   Divider,
+  FormControl,
   Grid,
+  MenuItem,
+  Pagination,
+  Paper,
   Rating,
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
 import Layout from "../../components/Layout";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import SaveIcon from "@mui/icons-material/Save";
+import api from "../../services/api";
+import useToast from "../../utils/toast";
+import { ceil, debounce } from "lodash";
+import { format } from "date-fns";
 
 const CustomStarIcon = styled(StarIcon)(({ theme }) => ({
   fontSize: 40, // Ganti ukuran sesuai kebutuhan
@@ -23,12 +35,79 @@ const CustomStarBorderIcon = styled(StarBorderIcon)(({ theme }) => ({
 }));
 
 const Review = () => {
+  const [displayToast] = useToast();
   const [value, setValue] = useState(0);
   const [nama, setNama] = useState("");
   const [ulasan, setUlasan] = useState("");
+  const [listReview, setListReview] = useState([]);
+  const [totalData, setTotalData] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
+
+  const [params, setParams] = useState({
+    page: 0,
+    length: 6,
+  });
+
+  const debounceInsertReview = useCallback(debounce(insertReview, 400), []);
+  const debounceGetReview = useCallback(debounce(getReview, 400), []);
+
+  const capitalizeFirstLetter = (str) => {
+    if (str.length === 0) return str; // Jika string kosong, kembalikan string kosong
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
+  const handlePageChange = (event, newPage) => {
+    setParams((prevParams) => ({
+      ...prevParams,
+      page: newPage - 1, // Pagination mulai dari 1, sedangkan params.page mulai dari 0
+    }));
+  };
+
+  async function insertReview(rating, name, desc) {
+    const payload = {
+      review_rating: rating,
+      reviewer_name: capitalizeFirstLetter(name),
+      review_desc: capitalizeFirstLetter(desc),
+    };
+
+    try {
+      const responseReview = await api.insertReview(payload);
+      const { data } = responseReview.data;
+
+      if (data === "Berhasil") {
+        displayToast("success", "Berhasil Membuat Review!");
+        setValue(0);
+        setNama("");
+        setUlasan("");
+        debounceGetReview(params);
+        // setParams({ page: 0, length: 6 });
+      } else {
+        displayToast("error", "Gagal Membuat Review!");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function getReview(params) {
+    try {
+      const responseGetReview = await api.getReview(params);
+      const { data, metadata } = responseGetReview.data;
+      setListReview(data);
+      setTotalData(metadata.total_data);
+      setTotalPage(ceil(metadata.total_data / params.length)); // Perbaiki pembagian total data
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    debounceGetReview(params);
+  }, [params]);
+
   return (
     <Layout>
-      <Box sx={{ pl: 3, pr: 3 }}>
+      <Box sx={{ pl: 1, pr: 1 }}>
         <Grid container>
           <Grid item xs={12}>
             <Typography
@@ -36,7 +115,7 @@ const Review = () => {
               align="center"
               sx={{ mb: 2, mt: 3, fontWeight: 600 }}
             >
-              BERIKAN ULASAN DI BAWAH INI!
+              BERIKAN ULASAN GLODOK PANCORAN DI BAWAH INI!
             </Typography>
           </Grid>
         </Grid>
@@ -57,9 +136,7 @@ const Review = () => {
         </Grid>
 
         <Grid container sx={{ mb: 2 }}>
-          <Grid item xs={3}></Grid>
-
-          <Grid item xs={6}>
+          <Grid item xs={12} md={10} mx="auto">
             <TextField
               fullWidth
               label="Masukkan nama anda"
@@ -68,14 +145,10 @@ const Review = () => {
               onChange={(e) => setNama(e.target.value)}
             />
           </Grid>
-
-          <Grid item xs={3}></Grid>
         </Grid>
 
         <Grid container sx={{ mb: 2 }}>
-          <Grid item xs={3}></Grid>
-
-          <Grid item xs={6}>
+          <Grid item xs={12} md={10} mx="auto">
             <TextField
               fullWidth
               label="Masukkan ulasan anda disini"
@@ -86,25 +159,20 @@ const Review = () => {
               onChange={(e) => setUlasan(e.target.value)}
             />
           </Grid>
-
-          <Grid item xs={3}></Grid>
         </Grid>
 
         <Grid container sx={{ mb: 2 }}>
-          <Grid item xs={3}></Grid>
-
-          <Grid item xs={6}>
+          <Grid item xs={12} md={10} mx="auto">
             <Button
               fullWidth
               variant="contained"
               startIcon={<SaveIcon />}
-              disabled={value === null || !nama || !ulasan}
+              disabled={value === 0 || value === null || !nama || !ulasan}
+              onClick={() => debounceInsertReview(value, nama, ulasan)}
             >
               SIMPAN
             </Button>
           </Grid>
-
-          <Grid item xs={3}></Grid>
         </Grid>
 
         <Divider sx={{ mt: 3 }} />
@@ -115,12 +183,101 @@ const Review = () => {
           <Typography
             variant="h5"
             align="center"
-            sx={{ mb: 2, mt: 3, fontWeight: 600 }}
+            sx={{ mb: 2, mt: 1, fontWeight: 600 }}
           >
             APA KATA MEREKA?
           </Typography>
         </Grid>
       </Grid>
+
+      <Grid container>
+        {totalData !== 0 ? (
+          <Grid item xs={12}>
+            <Typography variant="body1" align="center" sx={{ mb: 2 }}>
+              Data Review : {totalData}
+            </Typography>
+          </Grid>
+        ) : (
+          <Typography></Typography>
+        )}
+      </Grid>
+
+      {/* <Grid container spacing={2} sx={{ pl: 6, pr: 6 }}>
+        {listReview.map((review) => (
+          <Grid item xs={12} sm={6} key={review.review_id}>
+            <Paper style={{ padding: 16, marginBottom: 16 }}>
+              <Typography variant="h6" component="div">
+                {review.reviewer_name}
+              </Typography>
+              <Rating
+                name="read-only"
+                value={review.review_rating}
+                readOnly
+                precision={0.5}
+              />
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                style={{ margin: "8px 0" }}
+              >
+                {review.review_desc}
+              </Typography>
+              <Typography variant="caption" color="textSecondary">
+                {new Date(review.review_date).toLocaleDateString()}
+              </Typography>
+            </Paper>
+          </Grid>
+        ))}
+      </Grid> */}
+
+      <Grid container spacing={2} sx={{ pl: 6, pr: 6 }}>
+        {listReview !== null ? (
+          listReview &&
+          listReview.map((review, index) => (
+            <Grid item xs={12} sm={6} key={index}>
+              <Paper style={{ padding: 16, marginBottom: 16 }}>
+                <Typography variant="h6" component="div">
+                  {review.reviewer_name}
+                </Typography>
+                <Rating
+                  name="read-only"
+                  value={review.review_rating}
+                  readOnly
+                  precision={0.5}
+                />
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  style={{ margin: "8px 0" }}
+                >
+                  {review.review_desc}
+                </Typography>
+                <Typography variant="caption" color="textSecondary">
+                  Tanggal Review:{" "}
+                  {new Date(review.review_date).toLocaleDateString()}
+                </Typography>
+              </Paper>
+            </Grid>
+          ))
+        ) : (
+          <Grid item xs={12}>
+            <Typography variant="h6" align="center" color="textSecondary">
+              Tidak ada ulasan.
+            </Typography>
+          </Grid>
+        )}
+      </Grid>
+
+      <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+        <Pagination
+          count={totalPage}
+          page={params.page + 1}
+          shape="rounded"
+          variant="outlined"
+          color="primary"
+          onChange={handlePageChange}
+        />
+      </Box>
     </Layout>
   );
 };

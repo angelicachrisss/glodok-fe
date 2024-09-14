@@ -125,9 +125,19 @@ const Header = () => {
             Pesona Glodok
           </Typography>
           <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
-            <Button color="inherit">
+            {/* <Button color="inherit">
               <Link href="/" style={{ textDecoration: "none", color: "white" }}>
                 Home
+              </Link>
+            </Button> */}
+
+            <Button
+              color="inherit"
+              aria-controls="destinasi-menu"
+              aria-haspopup="true"
+            >
+              <Link href="/" passHref>
+                <a style={{ textDecoration: "none", color: "inherit" }}>Home</a>
               </Link>
             </Button>
             <Button
@@ -149,7 +159,9 @@ const Header = () => {
                   href="/destinasi/warisan"
                   style={{ textDecoration: "none", color: "black" }}
                 >
-                  Warisan
+                  <a style={{ textDecoration: "none", color: "inherit" }}>
+                    Warisan
+                  </a>
                 </Link>
               </MenuItem>
               <MenuItem onClick={handleDestinasiClose}>
@@ -157,7 +169,9 @@ const Header = () => {
                   href="/destinasi/kuliner"
                   style={{ textDecoration: "none", color: "black" }}
                 >
-                  Kuliner
+                  <a style={{ textDecoration: "none", color: "inherit" }}>
+                    Kuliner
+                  </a>
                 </Link>
               </MenuItem>
               <MenuItem onClick={handleDestinasiClose}>
@@ -165,40 +179,59 @@ const Header = () => {
                   href="/destinasi/religi"
                   style={{ textDecoration: "none", color: "black" }}
                 >
-                  Religi
+                  <a style={{ textDecoration: "none", color: "inherit" }}>
+                    Religi
+                  </a>
                 </Link>
               </MenuItem>
             </Menu>
-            <Button color="inherit">
-              <Link
-                href="/virtualtour"
-                style={{ textDecoration: "none", color: "white" }}
-              >
-                Virtual Tour
+
+            <Button
+              color="inherit"
+              aria-controls="destinasi-menu"
+              aria-haspopup="true"
+            >
+              <Link href="/virtualtour" passHref>
+                <a style={{ textDecoration: "none", color: "inherit" }}>
+                  {" "}
+                  Virtual Tour
+                </a>
               </Link>
             </Button>
-            <Button color="inherit">
-              <Link
-                href="/transportasi"
-                style={{ textDecoration: "none", color: "white" }}
-              >
-                Transportasi
+
+            <Button
+              color="inherit"
+              aria-controls="destinasi-menu"
+              aria-haspopup="true"
+            >
+              <Link href="/transportasi" passHref>
+                <a style={{ textDecoration: "none", color: "inherit" }}>
+                  Transportasi
+                </a>
               </Link>
             </Button>
-            <Button color="inherit">
-              <Link
-                href="/berita"
-                style={{ textDecoration: "none", color: "white" }}
-              >
-                Berita
+
+            <Button
+              color="inherit"
+              aria-controls="destinasi-menu"
+              aria-haspopup="true"
+            >
+              <Link href="/berita" passHref>
+                <a style={{ textDecoration: "none", color: "inherit" }}>
+                  Berita
+                </a>
               </Link>
             </Button>
-            <Button color="inherit">
-              <Link
-                href="/review"
-                style={{ textDecoration: "none", color: "white" }}
-              >
-                Review
+
+            <Button
+              color="inherit"
+              aria-controls="destinasi-menu"
+              aria-haspopup="true"
+            >
+              <Link href="/review" passHref>
+                <a style={{ textDecoration: "none", color: "inherit" }}>
+                  Review
+                </a>
               </Link>
             </Button>
           </Box>
