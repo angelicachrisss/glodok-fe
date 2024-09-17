@@ -6,9 +6,13 @@ import { Paper, Typography } from "@mui/material";
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 const images = [
-  "https://storage.jakarta-tourism.go.id/public/articles/6e1e1472-adf4-479c-be63-b5109266f9b4.jpg",
-  "https://asset.kompas.com/crops/G7xZBGRWwpO8pCo3hLVuoIaEzeg=/0x16:1600x1082/750x500/data/photo/2022/02/01/61f8c384ab993.jpeg",
-  "https://asset.kompas.com/crops/pWbSOD8088vEpCFrRO9KC-BoYFw=/0x0:0x0/750x500/data/photo/2023/01/19/63c96eb935248.jpg",
+  "/static/bannerglodok/glodok1.png",
+  "/static/bannerglodok/glodok2.png",
+  "/static/bannerglodok/glodok3.png",
+  
+  // "https://storage.jakarta-tourism.go.id/public/articles/6e1e1472-adf4-479c-be63-b5109266f9b4.jpg",
+  // "https://asset.kompas.com/crops/G7xZBGRWwpO8pCo3hLVuoIaEzeg=/0x16:1600x1082/750x500/data/photo/2022/02/01/61f8c384ab993.jpeg",
+  // "https://asset.kompas.com/crops/pWbSOD8088vEpCFrRO9KC-BoYFw=/0x0:0x0/750x500/data/photo/2023/01/19/63c96eb935248.jpg",
 ];
 
 const SwipedPictures = () => {
