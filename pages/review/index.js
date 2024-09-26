@@ -34,6 +34,47 @@ const CustomStarBorderIcon = styled(StarBorderIcon)(({ theme }) => ({
   fontSize: 40, // Ganti ukuran sesuai kebutuhan
 }));
 
+const formatDate = (dateString) => {
+  // Create a new Date object from the date string
+  const date = new Date(dateString);
+
+  // Handle time zone adjustment if necessary
+  const options = { timeZone: "UTC", hour12: false };
+
+  const day = String(
+    date.toLocaleString("en-GB", { day: "2-digit", timeZone: "UTC" })
+  ).padStart(2, "0");
+  const month = String(
+    date.toLocaleString("en-GB", { month: "2-digit", timeZone: "UTC" })
+  ).padStart(2, "0");
+  const year = date.toLocaleString("en-GB", {
+    year: "numeric",
+    timeZone: "UTC",
+  });
+  const hours = String(
+    date
+      .toLocaleString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: "UTC",
+      })
+      .split(":")[0]
+  ).padStart(2, "0");
+  const minutes = String(
+    date
+      .toLocaleString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: "UTC",
+      })
+      .split(":")[1]
+  ).padStart(2, "0");
+
+  return `${day}-${month}-${year} - ${hours}:${minutes}`;
+};
+
 const Review = () => {
   const [displayToast] = useToast();
   const [value, setValue] = useState(0);
@@ -254,7 +295,8 @@ const Review = () => {
                 </Typography>
                 <Typography variant="caption" color="textSecondary">
                   Tanggal Review:{" "}
-                  {new Date(review.review_date).toLocaleDateString()}
+                  {/* {new Date(review.review_date).toLocaleDateString()} */}
+                  {formatDate(review.review_date)}
                 </Typography>
               </Paper>
             </Grid>

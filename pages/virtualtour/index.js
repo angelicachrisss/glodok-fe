@@ -4,7 +4,7 @@ import Layout from "../../components/Layout";
 const VirtualTour = () => {
   return (
     <Layout>
-      <Box sx={{ width: "100%", height: "100vh",mb:-2 }}>
+      <Box sx={{ width: "100%", height: "100vh", mb: -2 }}>
         {/* <Typography
           variant="h5"
           align="center"
@@ -20,12 +20,11 @@ const VirtualTour = () => {
             width: "100%",
             height: "100%",
             overflow: "hidden", // Ensure no overflow from the iframe
-            
           }}
         >
           <Box
             component="iframe"
-            src="https://www.google.com/maps/embed?pb=!4v1724655920526!6m8!1m7!1sljgseTkYM_IsZDFOR5xF3g!2m2!1d-6.142525468708366!2d106.814621961638!3f307.9446347161664!4f6.129876015530229!5f0.7820865974627469"
+            src="https://www.google.com/maps/embed?pb=!4v1727359163523!6m8!1m7!1seiurS4NnFd8yKG1zpMvKAg!2m2!1d-6.142562151937587!2d106.8146603099731!3f306.1913928706233!4f-0.8199002550741596!5f0.7820865974627469"
             sx={{
               width: "100%",
               height: "100%",

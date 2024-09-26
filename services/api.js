@@ -6,7 +6,12 @@ const api = axios.create({
 });
 
 // const api = axios.create({
-//   baseURL: "https://shy-pianos-hope.loca.lt",
+//   baseURL: "http//localhost:8080",
+//   timeout: 10000,
+// });
+
+// const api = axios.create({
+//   baseURL: "https://whole-doors-clap.loca.lt",
 //   timeout: 10000,
 // });
 
@@ -19,7 +24,29 @@ const getReview = async (params) => {
   return await api.get(`/glodok/v1/data?type=getreview`, { params });
 };
 
+//destinasi
+// const getDestinasi = async (ket) => {
+//   return await api.get(
+//     `/glodok/v1/data?type=getalldestinasibykategori&ket=${ket}`
+//   );
+// };
+
+const getDestinasi = async (ket, name) => {
+  return await api.get(
+    `/glodok/v1/data?type=getsearchdestinasibykategori&ket=${ket}&destinasiname=${name}`
+  );
+};
+
+const getDestinasiByID = async (id) => {
+  return await api.get(
+    `/glodok/v1/data?type=getdestinasibyid&destinasiid=${id}`
+  );
+};
+
 export default {
   insertReview,
   getReview,
+
+  getDestinasi,
+  getDestinasiByID,
 };
