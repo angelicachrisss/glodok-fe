@@ -38,28 +38,28 @@ const Footer = () => {
               </Grid>
               <Grid item>
                 <Typography variant="body2" color="white">
-                  <Link href="#" color="inherit">
+                  <Link href="/" color="inherit">
                     Home
                   </Link>
                 </Typography>
               </Grid>
               <Grid item>
                 <Typography variant="body2" color="white">
-                  <Link href="#" color="inherit">
+                  <Link href="/destinasi/warisan" color="inherit">
                     Destinasi Warisan
                   </Link>
                 </Typography>
               </Grid>
               <Grid item>
                 <Typography variant="body2" color="white">
-                  <Link href="#" color="inherit">
+                  <Link href="/destinasi/kuliner" color="inherit">
                     Destinasi Kuliner
                   </Link>
                 </Typography>
               </Grid>
               <Grid item>
                 <Typography variant="body2" color="white">
-                  <Link href="#" color="inherit">
+                  <Link href="/destinasi/religi" color="inherit">
                     Destinasi Religi
                   </Link>
                 </Typography>
@@ -111,21 +111,21 @@ const Footer = () => {
               </Grid>
               <Grid item>
                 <Typography variant="body2" color="white">
-                  <Link href="#" color="inherit">
+                  <Link href="/transportasi" color="inherit">
                     Transportasi
                   </Link>
                 </Typography>
               </Grid>
               <Grid item>
                 <Typography variant="body2" color="white">
-                  <Link href="#" color="inherit">
+                  <Link href="/berita" color="inherit">
                     Berita
                   </Link>
                 </Typography>
               </Grid>
               <Grid item>
                 <Typography variant="body2" color="white">
-                  <Link href="#" color="inherit">
+                  <Link href="/review" color="inherit">
                     Review
                   </Link>
                 </Typography>

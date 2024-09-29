@@ -1,17 +1,12 @@
 import {
-  Alert,
   Box,
   Button,
-  Card,
-  CardContent,
+  Chip,
   Divider,
-  FormControl,
   Grid,
-  MenuItem,
   Pagination,
   Paper,
   Rating,
-  Select,
   TextField,
   Typography,
 } from "@mui/material";
@@ -24,7 +19,6 @@ import SaveIcon from "@mui/icons-material/Save";
 import api from "../../services/api";
 import useToast from "../../utils/toast";
 import { ceil, debounce } from "lodash";
-import { format } from "date-fns";
 
 const CustomStarIcon = styled(StarIcon)(({ theme }) => ({
   fontSize: 40, // Ganti ukuran sesuai kebutuhan
@@ -34,6 +28,47 @@ const CustomStarBorderIcon = styled(StarBorderIcon)(({ theme }) => ({
   fontSize: 40, // Ganti ukuran sesuai kebutuhan
 }));
 
+const formatDate = (dateString) => {
+  // Create a new Date object from the date string
+  const date = new Date(dateString);
+
+  // Handle time zone adjustment if necessary
+  const options = { timeZone: "UTC", hour12: false };
+
+  const day = String(
+    date.toLocaleString("en-GB", { day: "2-digit", timeZone: "UTC" })
+  ).padStart(2, "0");
+  const month = String(
+    date.toLocaleString("en-GB", { month: "2-digit", timeZone: "UTC" })
+  ).padStart(2, "0");
+  const year = date.toLocaleString("en-GB", {
+    year: "numeric",
+    timeZone: "UTC",
+  });
+  const hours = String(
+    date
+      .toLocaleString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: "UTC",
+      })
+      .split(":")[0]
+  ).padStart(2, "0");
+  const minutes = String(
+    date
+      .toLocaleString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: "UTC",
+      })
+      .split(":")[1]
+  ).padStart(2, "0");
+
+  return `${day}-${month}-${year} - ${hours}:${minutes}`;
+};
+
 const Review = () => {
   const [displayToast] = useToast();
   const [value, setValue] = useState(0);
@@ -42,6 +77,7 @@ const Review = () => {
   const [listReview, setListReview] = useState([]);
   const [totalData, setTotalData] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
+  const [rating, setRating] = useState("");
 
   const [params, setParams] = useState({
     page: 0,
@@ -50,6 +86,21 @@ const Review = () => {
 
   const debounceInsertReview = useCallback(debounce(insertReview, 400), []);
   const debounceGetReview = useCallback(debounce(getReview, 400), []);
+
+  const ratingOptions = [
+    { label: "All Ratings", value: "" },
+    { icon: <StarIcon />, label: "5", value: "5" },
+    { icon: <StarIcon />, label: "4", value: "4" },
+    { icon: <StarIcon />, label: "3", value: "3" },
+    { icon: <StarIcon />, label: "2", value: "2" },
+    { icon: <StarIcon />, label: "1", value: "1" },
+  ];
+
+  const handleChipClick = (value) => {
+    setRating(value);
+    setParams({ ...params, page: 0 }); // Reset to the first page on filter
+    debounceGetReview(value, params);
+  };
 
   const capitalizeFirstLetter = (str) => {
     if (str.length === 0) return str; // Jika string kosong, kembalikan string kosong
@@ -63,7 +114,7 @@ const Review = () => {
     }));
   };
 
-  async function insertReview(rating, name, desc) {
+  async function insertReview(tab, rating, name, desc) {
     const payload = {
       review_rating: rating,
       reviewer_name: capitalizeFirstLetter(name),
@@ -79,7 +130,11 @@ const Review = () => {
         setValue(0);
         setNama("");
         setUlasan("");
-        debounceGetReview(params);
+        if (tab === "") {
+          debounceGetReview("", { page: 0, length: 6 });
+        } else {
+          debounceGetReview(tab, { page: 0, length: 6 });
+        }
         // setParams({ page: 0, length: 6 });
       } else {
         displayToast("error", "Gagal Membuat Review!");
@@ -89,9 +144,9 @@ const Review = () => {
     }
   }
 
-  async function getReview(params) {
+  async function getReview(rating, params) {
     try {
-      const responseGetReview = await api.getReview(params);
+      const responseGetReview = await api.getReview(rating, params);
       const { data, metadata } = responseGetReview.data;
       setListReview(data);
       setTotalData(metadata.total_data);
@@ -102,8 +157,12 @@ const Review = () => {
   }
 
   useEffect(() => {
-    debounceGetReview(params);
-  }, [params]);
+    if (rating === "") {
+      debounceGetReview("", params);
+    } else {
+      debounceGetReview(rating, params);
+    }
+  }, [params, rating]);
 
   return (
     <Layout>
@@ -168,7 +227,7 @@ const Review = () => {
               variant="contained"
               startIcon={<SaveIcon />}
               disabled={value === 0 || value === null || !nama || !ulasan}
-              onClick={() => debounceInsertReview(value, nama, ulasan)}
+              onClick={() => debounceInsertReview(rating, value, nama, ulasan)}
             >
               SIMPAN
             </Button>
@@ -188,6 +247,21 @@ const Review = () => {
             APA KATA MEREKA?
           </Typography>
         </Grid>
+      </Grid>
+
+      <Grid container spacing={1} justifyContent="center" sx={{ mb: 2 }}>
+        {ratingOptions.map((option) => (
+          <Grid item key={option.value}>
+            <Chip
+              label={option.label}
+              variant={rating === option.value ? "filled" : "outlined"}
+              color={rating === option.value ? "primary" : "default"}
+              onClick={() => handleChipClick(option.value)}
+              icon={option.icon}
+              size="small"
+            />
+          </Grid>
+        ))}
       </Grid>
 
       <Grid container>
@@ -254,7 +328,8 @@ const Review = () => {
                 </Typography>
                 <Typography variant="caption" color="textSecondary">
                   Tanggal Review:{" "}
-                  {new Date(review.review_date).toLocaleDateString()}
+                  {/* {new Date(review.review_date).toLocaleDateString()} */}
+                  {formatDate(review.review_date)}
                 </Typography>
               </Paper>
             </Grid>

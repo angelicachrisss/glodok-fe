@@ -15,10 +15,37 @@ import Image from "next/image";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { useRouter } from "next/router";
+import {
+  Collapse,
+  Divider,
+  ListItemButton,
+  ListItemIcon,
+  ListSubheader,
+} from "@mui/material";
+
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import HomeIcon from "@mui/icons-material/Home";
+import ListIcon from "@mui/icons-material/List";
+import ApartmentIcon from "@mui/icons-material/Apartment";
+import FastfoodIcon from "@mui/icons-material/Fastfood";
+import TempleBuddhistIcon from "@mui/icons-material/TempleBuddhist";
+import ExploreIcon from "@mui/icons-material/Explore";
+import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
+import NewspaperIcon from "@mui/icons-material/Newspaper";
+import RateReviewIcon from "@mui/icons-material/RateReview";
+import ThreeSixtyIcon from "@mui/icons-material/ThreeSixty";
 
 const Header = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const router = useRouter();
+  const [open, setOpen] = useState(true);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
 
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
@@ -32,80 +59,156 @@ const Header = () => {
     setAnchorEl(null);
   };
 
+  const handleCloseDrawer = () => {
+    setDrawerOpen(false); // Hanya tutup drawer saat diperlukan
+  };
+
   const drawer = (
-    <Box sx={{ width: 250 }} onClick={handleDrawerToggle}>
-      <List>
-        <ListItem button>
-          <Link
-            href="/"
-            style={{ textDecoration: "none", color: "black", width: "100%" }}
-          >
-            <ListItemText primary="Home" />
-          </Link>
-        </ListItem>
+    <Box sx={{ width: 250 }}>
+      <ListItemButton
+        component="div" // Use 'div' instead of 'a' to prevent navigation
+        sx={{
+          pointerEvents: "none", // Disable pointer events
+        }}
+      >
+        <ListItemIcon sx={{ fontSize: 20 }}>
+          <img
+            src="/static/logo/pesonaglodok.png"
+            alt="Pesona Glodok"
+            style={{ width: 30, height: 30 }}
+          />
+        </ListItemIcon>
+        <ListItemText
+          sx={{ my: 0 }}
+          primary="Pesona Glodok"
+          primaryTypographyProps={{
+            fontSize: 20,
+            fontWeight: "medium",
+            letterSpacing: 0,
+          }}
+        />
+      </ListItemButton>
 
-        <ListItem button>
+      <Divider />
+
+      <List
+        sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+        component="nav"
+        aria-labelledby="nested-list-subheader"
+      >
+        <ListItemButton
+          onClick={() => {
+            handleCloseDrawer(); // Tutup drawer saat klik Sent mail
+            router.push("/");
+          }}
+        >
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText primary="Home" />
+        </ListItemButton>
+
+        <ListItemButton onClick={handleClick}>
+          <ListItemIcon>
+            <ListIcon />
+          </ListItemIcon>
           <ListItemText primary="Destinasi" />
-        </ListItem>
-        <List sx={{ pl: 4 }}>
-          <ListItem button>
-            <Link
-              href="/destinasi/warisan"
-              style={{ textDecoration: "none", color: "black", width: "100%" }}
+          {open ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={open} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              onClick={() => {
+                handleCloseDrawer(); // Tutup drawer saat klik item
+                router.push("/destinasi/warisan");
+              }}
             >
+              <ListItemIcon>
+                <ApartmentIcon />
+              </ListItemIcon>
               <ListItemText primary="Warisan" />
-            </Link>
-          </ListItem>
-          <ListItem button>
-            <Link
-              href="/destinasi/kuliner"
-              style={{ textDecoration: "none", color: "black", width: "100%" }}
-            >
-              <ListItemText primary="Kuliner" />
-            </Link>
-          </ListItem>
-          <ListItem button>
-            <Link
-              href="/destinasi/religi"
-              style={{ textDecoration: "none", color: "black", width: "100%" }}
-            >
-              <ListItemText primary="Religi" />
-            </Link>
-          </ListItem>
-        </List>
+            </ListItemButton>
+          </List>
 
-        <ListItem button>
-          <Link
-            href="/virtualtour"
-            style={{ textDecoration: "none", color: "black", width: "100%" }}
-          >
-            <ListItemText primary="Virtual Tour" />
-          </Link>
-        </ListItem>
-        <ListItem button>
-          <Link
-            href="/transportasi"
-            style={{ textDecoration: "none", color: "black", width: "100%" }}
-          >
-            <ListItemText primary="Transportasi" />
-          </Link>
-        </ListItem>
-        <ListItem button>
-          <Link
-            href="/berita"
-            style={{ textDecoration: "none", color: "black", width: "100%" }}
-          >
-            <ListItemText primary="Berita" />
-          </Link>
-        </ListItem>
-        <ListItem button>
-          <Link
-            href="/review"
-            style={{ textDecoration: "none", color: "black", width: "100%" }}
-          >
-            <ListItemText primary="Review" />
-          </Link>
-        </ListItem>
+          <List component="div" disablePadding>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              onClick={() => {
+                handleCloseDrawer(); // Tutup drawer saat klik item
+                router.push("/destinasi/kuliner");
+              }}
+            >
+              <ListItemIcon>
+                <FastfoodIcon />
+              </ListItemIcon>
+              <ListItemText primary="Kuliner" />
+            </ListItemButton>
+          </List>
+
+          <List component="div" disablePadding>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              onClick={() => {
+                handleCloseDrawer(); // Tutup drawer saat klik item
+                router.push("/destinasi/religi");
+              }}
+            >
+              <ListItemIcon>
+                <TempleBuddhistIcon />
+              </ListItemIcon>
+              <ListItemText primary="Religi" />
+            </ListItemButton>
+          </List>
+        </Collapse>
+
+        <ListItemButton
+          onClick={() => {
+            handleCloseDrawer(); // Tutup drawer saat klik
+            router.push("/virtualtour");
+          }}
+        >
+          <ListItemIcon>
+            <ThreeSixtyIcon />
+          </ListItemIcon>
+          <ListItemText primary="Virtual Tour" />
+        </ListItemButton>
+
+        <ListItemButton
+          onClick={() => {
+            handleCloseDrawer(); // Tutup drawer saat klik
+            router.push("/transportasi");
+          }}
+        >
+          <ListItemIcon>
+            <DirectionsBusIcon />
+          </ListItemIcon>
+          <ListItemText primary="Transportasi" />
+        </ListItemButton>
+
+        <ListItemButton
+          onClick={() => {
+            handleCloseDrawer(); // Tutup drawer saat klik
+            router.push("/berita");
+          }}
+        >
+          <ListItemIcon>
+            <NewspaperIcon />
+          </ListItemIcon>
+          <ListItemText primary="Berita" />
+        </ListItemButton>
+
+        <ListItemButton
+          onClick={() => {
+            handleCloseDrawer(); // Tutup drawer saat klik
+            router.push("/review");
+          }}
+        >
+          <ListItemIcon>
+            <RateReviewIcon />
+          </ListItemIcon>
+          <ListItemText primary="Review" />
+        </ListItemButton>
       </List>
     </Box>
   );
@@ -125,16 +228,13 @@ const Header = () => {
             Pesona Glodok
           </Typography>
           <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
-            {/* <Button color="inherit">
-              <Link href="/" style={{ textDecoration: "none", color: "white" }}>
-                Home
-              </Link>
-            </Button> */}
-
             <Button
               color="inherit"
               aria-controls="destinasi-menu"
               aria-haspopup="true"
+              onClick={() => {
+                router.push("/");
+              }}
             >
               <Link href="/" passHref>
                 <a style={{ textDecoration: "none", color: "inherit" }}>Home</a>
@@ -154,35 +254,30 @@ const Header = () => {
               open={Boolean(anchorEl)}
               onClose={handleDestinasiClose}
             >
-              <MenuItem onClick={handleDestinasiClose} sx={{ width: 120 }}>
-                <Link
-                  href="/destinasi/warisan"
-                  style={{ textDecoration: "none", color: "black" }}
-                >
-                  <a style={{ textDecoration: "none", color: "inherit" }}>
-                    Warisan
-                  </a>
-                </Link>
+              <MenuItem
+                onClick={() => {
+                  router.push("/destinasi/warisan");
+                  handleDestinasiClose();
+                }}
+                sx={{ width: 120 }}
+              >
+                Warisan
               </MenuItem>
-              <MenuItem onClick={handleDestinasiClose}>
-                <Link
-                  href="/destinasi/kuliner"
-                  style={{ textDecoration: "none", color: "black" }}
-                >
-                  <a style={{ textDecoration: "none", color: "inherit" }}>
-                    Kuliner
-                  </a>
-                </Link>
+              <MenuItem
+                onClick={() => {
+                  router.push("/destinasi/kuliner");
+                  handleDestinasiClose();
+                }}
+              >
+                Kuliner
               </MenuItem>
-              <MenuItem onClick={handleDestinasiClose}>
-                <Link
-                  href="/destinasi/religi"
-                  style={{ textDecoration: "none", color: "black" }}
-                >
-                  <a style={{ textDecoration: "none", color: "inherit" }}>
-                    Religi
-                  </a>
-                </Link>
+              <MenuItem
+                onClick={() => {
+                  router.push("/destinasi/religi");
+                  handleDestinasiClose();
+                }}
+              >
+                Religi
               </MenuItem>
             </Menu>
 
@@ -190,10 +285,12 @@ const Header = () => {
               color="inherit"
               aria-controls="destinasi-menu"
               aria-haspopup="true"
+              onClick={() => {
+                router.push("/virtualtour");
+              }}
             >
               <Link href="/virtualtour" passHref>
                 <a style={{ textDecoration: "none", color: "inherit" }}>
-                  {" "}
                   Virtual Tour
                 </a>
               </Link>
@@ -203,6 +300,9 @@ const Header = () => {
               color="inherit"
               aria-controls="destinasi-menu"
               aria-haspopup="true"
+              onClick={() => {
+                router.push("/transportasi");
+              }}
             >
               <Link href="/transportasi" passHref>
                 <a style={{ textDecoration: "none", color: "inherit" }}>
@@ -215,6 +315,9 @@ const Header = () => {
               color="inherit"
               aria-controls="destinasi-menu"
               aria-haspopup="true"
+              onClick={() => {
+                router.push("/berita");
+              }}
             >
               <Link href="/berita" passHref>
                 <a style={{ textDecoration: "none", color: "inherit" }}>
@@ -227,6 +330,9 @@ const Header = () => {
               color="inherit"
               aria-controls="destinasi-menu"
               aria-haspopup="true"
+              onClick={() => {
+                router.push("/review");
+              }}
             >
               <Link href="/review" passHref>
                 <a style={{ textDecoration: "none", color: "inherit" }}>
