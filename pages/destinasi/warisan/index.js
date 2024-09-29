@@ -68,7 +68,7 @@ const Warisan = () => {
   async function mountGetDestinasi(value) {
     setIsLoading(true);
     try {
-      const responseGetDestinasi = await api.getDestinasi("W", value);
+      const responseGetDestinasi = await api.getDestinasi("W", "", value);
       const { data, metadata } = responseGetDestinasi.data;
       setListDestinasi(data);
       setIsLoading(false);
@@ -139,9 +139,9 @@ const Warisan = () => {
 
         <Grid container>
           <Grid item xs={12}>
-            {!listDestinasi.length ? (
+            {!listDestinasi ? (
               <Typography
-                sx={{ mt: 10, fontWeight: 600, color: "red" }}
+                sx={{ mt: 10, fontWeight: 600, color: "red", mb: 20 }}
                 align="center"
               >
                 TIDAK ADA DATA DESTINASI!
@@ -168,7 +168,10 @@ const Warisan = () => {
                     >
                       <CardMedia
                         component="img"
-                        sx={{ width: { xs: "100%", sm: 150 }, height: { xs: 200, sm: 'auto' } }} // Responsive image size
+                        sx={{
+                          width: { xs: "100%", sm: 150 },
+                          height: { xs: 200, sm: "auto" },
+                        }} // Responsive image size
                         src={item.destinasi_gambar_url}
                         alt={item.destinasi_name}
                       />
@@ -191,16 +194,24 @@ const Warisan = () => {
                           </Typography>
                           <Button
                             size="small"
-                            sx={{ alignSelf: { xs: "flex-start", sm: "flex-end" } }} // Align button
+                            sx={{
+                              alignSelf: { xs: "flex-start", sm: "flex-end" },
+                            }} // Align button
                             onClick={() => pindahKeDetail(item, "W")}
-                            variant={window.innerWidth < 600 ? "contained" : "text" } 
+                            variant={
+                              window.innerWidth < 600 ? "contained" : "text"
+                            }
                           >
                             Lihat Detail
                           </Button>
                         </Box>
 
                         <Box>
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ mt: 1 }}
+                          >
                             {item.destinasi_alamat}
                           </Typography>
                           <Typography

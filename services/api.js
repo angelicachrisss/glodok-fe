@@ -20,20 +20,16 @@ const insertReview = async (payload) => {
   return await api.post("/glodok/v1/data?type=insertreview", payload);
 };
 
-const getReview = async (params) => {
-  return await api.get(`/glodok/v1/data?type=getreview`, { params });
+const getReview = async (rating, params) => {
+  return await api.get(`/glodok/v1/data?type=getallreview&rating=${rating}`, {
+    params,
+  });
 };
 
 //destinasi
-// const getDestinasi = async (ket) => {
-//   return await api.get(
-//     `/glodok/v1/data?type=getalldestinasibykategori&ket=${ket}`
-//   );
-// };
-
-const getDestinasi = async (ket, name) => {
+const getDestinasi = async (ket, labelhalal, name) => {
   return await api.get(
-    `/glodok/v1/data?type=getsearchdestinasibykategori&ket=${ket}&destinasiname=${name}`
+    `/glodok/v1/data?type=getalldestinasi&ket=${ket}&labelhalal=${labelhalal}&destinasiname=${name}`
   );
 };
 

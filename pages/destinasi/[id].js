@@ -4,14 +4,18 @@ import Layout from "../../components/Layout";
 import {
   Box,
   Button,
+  Chip,
   CircularProgress,
   debounce,
+  Fab,
   Grid,
   Modal,
   Typography,
 } from "@mui/material";
 import api from "../../services/api";
 import useToast from "../../utils/toast";
+import NavigationIcon from "@mui/icons-material/Navigation";
+import MapIcon from "@mui/icons-material/Map";
 
 const formatTime = (isoString) => {
   if (!isoString) return "N/A";
@@ -41,6 +45,7 @@ const DetailDestinasi = () => {
   const [keterangan, setKeterangan] = useState("");
   const [listDetailDestinasi, setListDetailDestinasi] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
+  const [jarak, setJarak] = useState(null);
 
   const debounceMountDestinasiByID = useCallback(
     debounce(mountGetDestinasiByID, 400),
@@ -85,6 +90,14 @@ const DetailDestinasi = () => {
     }
   }
 
+  const latitude = listDetailDestinasi.destinasi_lang;
+  const longitude = listDetailDestinasi.destinasi_long;
+  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+
+  const userMapUrl = userLocation
+    ? `https://www.google.com/maps/dir/?api=1&origin=${userLocation.latitude},${userLocation.longitude}&destination=${latitude},${longitude}`
+    : "";
+
   useEffect(() => {
     if (!router.isReady) return;
 
@@ -116,35 +129,58 @@ const DetailDestinasi = () => {
     }
   }, [router.isReady, router.query]);
 
-  const latitude = listDetailDestinasi.destinasi_lang;
-  const longitude = listDetailDestinasi.destinasi_long;
-  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
-  // const userMapUrl = userLocation
-  //   ? `https://www.google.com/maps/search/?api=1&query=${userLocation.latitude},${userLocation.longitude}`
-  //   : "";
+  // useEffect(() => {
+  //   if (userLocation) {
+  //     const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  //       const toRadians = (value) => (value * Math.PI) / 180;
 
-  const userMapUrl = userLocation
-    ? `https://www.google.com/maps/dir/?api=1&origin=${userLocation.latitude},${userLocation.longitude}&destination=${latitude},${longitude}`
-    : "";
+  //       const R = 6371; // Radius bumi dalam kilometer
+  //       const dLat = toRadians(lat2 - lat1);
+  //       const dLon = toRadians(lon2 - lon1);
+
+  //       const a =
+  //         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+  //         Math.cos(toRadians(lat1)) *
+  //           Math.cos(toRadians(lat2)) *
+  //           Math.sin(dLon / 2) *
+  //           Math.sin(dLon / 2);
+
+  //       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  //       return R * c; // Jarak dalam kilometer
+  //     };
+
+  //     const distance = calculateDistance(
+  //       userLocation.latitude,
+  //       userLocation.longitude,
+  //       latitude,
+  //       longitude
+  //     );
+
+  //     setJarak(distance.toFixed(2));
+  //   }
+  // }, [userLocation, latitude, longitude]); // Depend on userLocation, latitude, and longitude
 
   return (
     <Layout>
       <Box sx={{ pl: 4, pr: 4, mt: 3 }}>
         <Grid container>
-          <Grid item xs={2}>
+          <Grid item xs={12}>
             <Button
               variant="contained"
               sx={{ backgroundColor: "#8D493A", mt: 0.2 }}
-              fullWidth
               onClick={() => PindahKeIndex(keterangan)}
             >
               KEMBALI
             </Button>
           </Grid>
-          <Grid item xs={10}>
+        </Grid>
+
+        <Grid container>
+          <Grid item xs={12}>
             <Typography
               align="center"
-              sx={{ mt: 1, fontWeight: 600 }}
+              sx={{ mt: { xs: 2, sm: 0 }, fontWeight: 600 }}
               variant="h6"
             >
               DETAIL {destinasiName}
@@ -179,7 +215,21 @@ const DetailDestinasi = () => {
         {listDetailDestinasi.destinasi_labelhalal && (
           <Grid sx={{ mb: 2 }}>
             <Typography sx={{ fontWeight: 600 }}>Label Halal:</Typography>
-            <Typography>{listDetailDestinasi.destinasi_labelhalal}</Typography>
+            {listDetailDestinasi.destinasi_labelhalal === "N" ? (
+              <Chip
+                color="error"
+                label="Non-Halal"
+                size="small"
+                sx={{ mb: 0.1 }}
+              />
+            ) : (
+              <Chip
+                color="success"
+                label="Halal"
+                size="small"
+                sx={{ mb: 0.1 }}
+              />
+            )}
           </Grid>
         )}
 
@@ -205,23 +255,38 @@ const DetailDestinasi = () => {
 
         <Grid sx={{ mb: 2 }}>
           <Typography sx={{ fontWeight: 600 }}>Peta Lokasi:</Typography>
-          <Button
+          {/* <Button
             variant="contained"
             color="primary"
             size="small"
             href={mapUrl}
             target="_blank"
           >
-            Buka Peta
-          </Button>
+            <MapIcon /> Buka Peta
+          </Button> */}
+
+          <Fab
+            variant="extended"
+            size="medium"
+            sx={{ mt: 1 }}
+            href={mapUrl}
+            target="_blank"
+            color="primary"
+          >
+            <MapIcon sx={{ mr: 1 }} />
+            BUKA PETA
+          </Fab>
         </Grid>
 
         {userLocation && (
           <Grid sx={{ mb: 2 }}>
+            {/* <Typography sx={{ fontWeight: 600, color: "red" }}>
+              Jarak dari titik anda ke titik tujuan ± {jarak} km
+            </Typography> */}
             <Typography sx={{ fontWeight: 600 }}>
               Klik di sini untuk melihat rute terbaik di Google Maps!
             </Typography>
-            <Button
+            {/* <Button
               variant="contained"
               color="secondary"
               size="small"
@@ -229,7 +294,18 @@ const DetailDestinasi = () => {
               target="_blank"
             >
               KE GOOGLE MAPS
-            </Button>
+            </Button> */}
+            <Fab
+              variant="extended"
+              size="medium"
+              sx={{ mt: 1 }}
+              href={userMapUrl}
+              target="_blank"
+              color="error"
+            >
+              <NavigationIcon sx={{ mr: 1 }} />
+              KE GOOGLE MAPS
+            </Fab>
           </Grid>
         )}
 

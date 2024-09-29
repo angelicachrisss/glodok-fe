@@ -4,10 +4,13 @@ import {
   Card,
   CardContent,
   CardMedia,
+  Chip,
   CircularProgress,
   debounce,
   Grid,
   Modal,
+  Tab,
+  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
@@ -29,13 +32,14 @@ const style = {
   borderRadius: 2,
 };
 
-const Religi = () => {
+const Kuliner = () => {
   const [displayToast] = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [inputSearch, setInputSearch] = useState("");
   const [listDestinasi, setListDestinasi] = useState([]);
+  const [tab, setTab] = useState("ALL");
 
   const debounceMountDestinasi = useCallback(
     debounce(mountGetDestinasi, 400),
@@ -63,14 +67,18 @@ const Religi = () => {
   const handleSearchByEnter = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      debounceMountDestinasi(inputSearch);
+      if (tab === "ALL") {
+        debounceMountDestinasi("", e.target.value);
+      } else {
+        debounceMountDestinasi(tab, e.target.value);
+      }
     }
   };
 
-  async function mountGetDestinasi(value) {
+  async function mountGetDestinasi(label, value) {
     setIsLoading(true);
     try {
-      const responseGetDestinasi = await api.getDestinasi("R", "", value);
+      const responseGetDestinasi = await api.getDestinasi("K", label, value);
       const { data, metadata } = responseGetDestinasi.data;
       setListDestinasi(data);
       setIsLoading(false);
@@ -86,10 +94,14 @@ const Religi = () => {
 
   useEffect(() => {
     if (!isFetching) {
-      debounceMountDestinasi(inputSearch);
+      if (tab === "ALL") {
+        debounceMountDestinasi("", inputSearch);
+      } else {
+        debounceMountDestinasi(tab, inputSearch);
+      }
       setIsFetching(true);
     }
-  }, [inputSearch]);
+  }, [inputSearch, tab]);
 
   return (
     <Layout>
@@ -112,27 +124,37 @@ const Religi = () => {
               fullWidth
               label='Masukkan nama destinasi dan tekan "ENTER" untuk mencari'
               variant="outlined"
+              placeholder='Masukkan nama destinasi dan tekan "ENTER" untuk mencari'
               value={inputSearch}
               size="small"
               onChange={(e) => {
                 setInputSearch(e.target.value);
                 if (e.target.value === "") {
-                  debounceMountDestinasi("");
+                  if (tab === "ALL") {
+                    debounceMountDestinasi("", e.target.value);
+                  } else {
+                    debounceMountDestinasi(tab, e.target.value);
+                  }
                 }
               }}
               onKeyDown={handleSearchByEnter}
               sx={{ backgroundColor: "white" }}
             />
           </Grid>
-
           <Grid item xs={4}>
             <Button
               variant="contained"
-              sx={{ backgroundColor: "#8D493A", mt: { sm: 0 } }}
+              sx={{ backgroundColor: "#8D493A", mt: 0.2 }}
               startIcon={<SearchIcon />}
               fullWidth
               disabled={!inputSearch}
-              onClick={() => debounceMountDestinasi(inputSearch)}
+              onClick={() => {
+                if (tab === "ALL") {
+                  debounceMountDestinasi("", inputSearch);
+                } else {
+                  debounceMountDestinasi(tab, inputSearch);
+                }
+              }}
             >
               SEARCH
             </Button>
@@ -140,6 +162,25 @@ const Religi = () => {
         </Grid>
 
         <Grid container>
+          <Grid container sx={{ mt: 2 }}>
+            <Tabs
+              value={tab}
+              onChange={(e, newValue) => {
+                setInputSearch("");
+                setTab(newValue);
+                if (newValue === "ALL") {
+                  debounceMountDestinasi("", "");
+                } else {
+                  debounceMountDestinasi(newValue, "");
+                }
+              }}
+            >
+              <Tab label="SEMUA DATA" value={"ALL"} />
+              <Tab label="HALAL" value={"H"} />
+              <Tab label="NON HALAL" value={"N"} />
+            </Tabs>
+          </Grid>
+
           <Grid item xs={12}>
             {!listDestinasi ? (
               <Typography
@@ -156,7 +197,12 @@ const Religi = () => {
                   align="center"
                   variant="h6"
                 >
-                  LIST DESTINASI RELIGI
+                  LIST{" "}
+                  {tab === "ALL"
+                    ? "DESTINASI KULINER"
+                    : tab === "H"
+                    ? "DESTINASI KULINER HALAL"
+                    : "DESTINASI KULINER NON-HALAL"}
                 </Typography>
                 {listDestinasi.map((item) => (
                   <Grid item xs={12} key={item.destinasi_id}>
@@ -192,15 +238,33 @@ const Religi = () => {
                             flexDirection: { xs: "column", sm: "row" }, // Stack on mobile
                           }}
                         >
-                          <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                            {item.destinasi_name}
+                          <Typography
+                            variant="body1"
+                            sx={{ fontWeight: 600, mb: 1 }}
+                          >
+                            {item.destinasi_name}{" "}
+                            {item.destinasi_labelhalal === "N" ? (
+                              <Chip
+                                color="error"
+                                label="Non-Halal"
+                                size="small"
+                                sx={{ mb: 0.1 }}
+                              />
+                            ) : (
+                              <Chip
+                                color="success"
+                                label="Halal"
+                                size="small"
+                                sx={{ mb: 0.1 }}
+                              />
+                            )}
                           </Typography>
                           <Button
                             size="small"
                             sx={{
                               alignSelf: { xs: "flex-start", sm: "flex-end" },
                             }} // Align button
-                            onClick={() => pindahKeDetail(item, "R")}
+                            onClick={() => pindahKeDetail(item, "K")}
                             variant={
                               window.innerWidth < 600 ? "contained" : "text"
                             }
@@ -250,4 +314,4 @@ const Religi = () => {
   );
 };
 
-export default Religi;
+export default Kuliner;
