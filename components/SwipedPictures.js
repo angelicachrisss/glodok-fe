@@ -1,18 +1,40 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
-import { Paper, Box } from "@mui/material";
+import { Paper, Box, debounce } from "@mui/material";
+import api from "../services/api";
+import useToast from "../utils/toast";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-const images = [
-  "/static/bannerglodok/glodok1.png",
-  "/static/bannerglodok/glodok2.png",
-  "/static/bannerglodok/glodok3.png",
-];
-
 const SwipedPictures = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [images, setImages] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
+
+  const debounceFotoBeranda = useCallback(debounce(getFotoBeranda, 400), []);
+
+  async function getFotoBeranda() {
+    try {
+      const response = await api.getFotoBeranda();
+      const { data } = response.data;
+
+      // Extract image URLs from the response
+      const imageUrls = data
+        .map((item) => item.fotoberanda_gambar_url)
+        .filter((url) => url);
+      setImages(imageUrls);
+    } catch (error) {
+      // displayToast("error", error.message);
+    }
+  }
+
+  useEffect(() => {
+    if (!isFetching) {
+      debounceFotoBeranda();
+      setIsFetching(true);
+    }
+  }, []);
 
   const handleStepChange = (step) => {
     setActiveStep(step);
