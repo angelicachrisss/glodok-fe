@@ -33,10 +33,23 @@ const insertReview = async (payload) => {
   return await api.post("/glodok/v1/data?type=insertreview", payload);
 };
 
-const getReview = async (rating, params) => {
-  return await api.get(`/glodok/v1/data?type=getallreview&rating=${rating}`, {
-    params,
-  });
+const getReview = async (destinasiid, rating, params) => {
+  return await api.get(
+    `/glodok/v1/data?type=getallreview&destinasiid=${destinasiid}&rating=${rating}`,
+    {
+      params,
+    }
+  );
+};
+
+const getAvgRating = async (destinasiid) => {
+  return await api.get(
+    `/glodok/v1/data?type=getavgreview&destinasiid=${destinasiid}`
+  );
+};
+
+const getDestinasiDropDown = async () => {
+  return await api.get(`/glodok/v1/data?type=getdestinasiddml`);
 };
 
 //destinasi
@@ -53,7 +66,7 @@ const getDestinasiByID = async (id) => {
 };
 
 const getJenisDestinasiDropDown = async () => {
-  return await api.get(`/glodok/v1/data?type=getjenisdestinasidropdown`);
+  return await api.get(`/glodok/v1/data?type=getjenisdestinasiml`);
 };
 
 //maps
@@ -88,6 +101,8 @@ export default {
   //review
   insertReview,
   getReview,
+  getAvgRating,
+  getDestinasiDropDown,
 
   //destinasi
   getDestinasi,

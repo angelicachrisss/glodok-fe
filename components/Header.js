@@ -42,6 +42,7 @@ import useToast from "../utils/toast";
 import CircleIcon from "@mui/icons-material/Circle";
 
 const Header = () => {
+  const [displayToast] = useToast();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const router = useRouter();
@@ -86,10 +87,7 @@ const Header = () => {
       }));
       setListJenisDestinasi(jenisDestinasi);
     } catch (error) {
-      displayToast(
-        "error",
-        "Terjadi kesalahan! Silahkan Refresh Halaman"
-      );
+      displayToast("error", "Terjadi kesalahan! Silahkan Refresh Halaman");
     }
   }
 

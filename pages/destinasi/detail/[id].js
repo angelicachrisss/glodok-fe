@@ -9,6 +9,7 @@ import {
   debounce,
   Fab,
   Grid,
+  IconButton,
   Modal,
   Typography,
 } from "@mui/material";
@@ -16,6 +17,8 @@ import api from "../../../services/api";
 import useToast from "../../../utils/toast";
 import NavigationIcon from "@mui/icons-material/Navigation";
 import MapIcon from "@mui/icons-material/Map";
+import StarIcon from "@mui/icons-material/Star";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 const formatTime = (isoString) => {
   if (!isoString) return "N/A";
@@ -48,17 +51,27 @@ const DetailDestinasi = () => {
   const [jarak, setJarak] = useState(null);
   const [jenisDestinasiID, setJenisDestinasiID] = useState("");
   const [locationFetched, setLocationFetched] = useState(false); // New state to track location fetching
+  const [avgRating, setAvgRating] = useState(0);
+  const [totalReviews, setTotalReviews] = useState(0);
 
   const debounceMountDestinasiByID = useCallback(
     debounce(mountGetDestinasiByID, 400),
     []
   );
 
-  const PindahKeIndex = (jdid) => {
-    console.log("jdid", jdid);
+  const debounceAvgRating = useCallback(debounce(mountGetAverage, 400), []);
 
+  const PindahKeIndex = (jdid) => {
     if (jdid) {
       router.push(`/destinasi/${jdid}`);
+    } else {
+      console.warn("Jenis Destinasi ID is undefined");
+    }
+  };
+
+  const PindahKeDetail = (id) => {
+    if (id) {
+      router.push(`/destinasi/detailreview/${id}`);
     } else {
       console.warn("Jenis Destinasi ID is undefined");
     }
@@ -74,6 +87,24 @@ const DetailDestinasi = () => {
       } else {
         throw new Error("Response data is undefined or null");
       }
+    } catch (error) {
+      console.error(error);
+      displayToast(
+        "error",
+        "Gagal Mengambil Data Destinasi! Silahkan Refresh Halaman"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function mountGetAverage(value) {
+    setIsLoading(true);
+    try {
+      const response = await api.getAvgRating(value);
+      const { data, metadata } = response.data;
+      setAvgRating(data);
+      setTotalReviews(metadata.total_data);
     } catch (error) {
       console.error(error);
       displayToast(
@@ -131,13 +162,15 @@ const DetailDestinasi = () => {
   useEffect(() => {
     if (!router.isReady) return;
 
-    const { id, name, jenisdestinasiid } = router.query;
+    // const { id, name, jenisdestinasiid } = router.query;
+    const { id } = router.query;
     setDestinasiID(id);
-    setDestinasiName(name.toUpperCase());
-    setJenisDestinasiID(jenisdestinasiid);
+    // setDestinasiName(name.toUpperCase());
+    // setJenisDestinasiID(jenisdestinasiid);
 
     if (id) {
       debounceMountDestinasiByID(id);
+      debounceAvgRating(id);
     }
 
     // Request user's location only if it hasn't been fetched yet
@@ -168,22 +201,12 @@ const DetailDestinasi = () => {
             <Button
               variant="contained"
               sx={{ backgroundColor: "#8D493A", mt: 0.2 }}
-              onClick={() => PindahKeIndex(jenisDestinasiID)}
+              onClick={() =>
+                PindahKeIndex(listDetailDestinasi.jenisdestinasi_id)
+              }
             >
               KEMBALI
             </Button>
-          </Grid>
-        </Grid>
-
-        <Grid container>
-          <Grid item xs={12}>
-            <Typography
-              align="center"
-              sx={{ mt: { xs: 2, sm: 0 }, fontWeight: 600 }}
-              variant="h6"
-            >
-              DETAIL {destinasiName}
-            </Typography>
           </Grid>
         </Grid>
 
@@ -210,6 +233,53 @@ const DetailDestinasi = () => {
             </Grid>
           </Grid>
         </Box>
+
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography
+              // align="center"
+              sx={{ mt: { xs: 2, sm: 0 }, fontWeight: 600 }}
+              variant="h6"
+            >
+              {listDetailDestinasi.destinasi_name}
+            </Typography>
+          </Grid>
+        </Grid>
+
+        {totalReviews !== 0 ? (
+          <Grid container sx={{ mb: 2 }} alignItems="center">
+            <Grid item xs={1} sm={0.4}>
+              <StarIcon
+                sx={{
+                  color: "orange",
+                  fontSize: { xs: "20px", sm: "inherit" },
+                }}
+              />
+            </Grid>
+            <Grid item xs={8} sm={5}>
+              <Typography
+                sx={{
+                  color: "black",
+                  fontSize: { xs: "14px", sm: "16px" }, // Responsive font size
+                  fontWeight: "bold",
+                  mb: 0.5,
+                }}
+              >
+                {avgRating} - {totalReviews} ULASAN
+                <IconButton
+                  color="black"
+                  size="small"
+                  sx={{ mb: 0.5 }}
+                  onClick={() => PindahKeDetail(destinasiID)}
+                >
+                  <NavigateNextIcon fontSize="inherit" />
+                </IconButton>
+              </Typography>
+            </Grid>
+          </Grid>
+        ) : (
+          <Grid></Grid>
+        )}
 
         {listDetailDestinasi.destinasi_labelhalalyn && (
           <Grid sx={{ mb: 2 }}>
@@ -260,12 +330,16 @@ const DetailDestinasi = () => {
               Lokasi
             </Button> */}
           </Typography>
-          <Typography>{listDetailDestinasi.destinasi_alamat}</Typography>
+          <Typography sx={{ textAlign: "justify" }}>
+            {listDetailDestinasi.destinasi_alamat}
+          </Typography>
         </Grid>
 
         <Grid sx={{ mb: 2 }}>
           <Typography sx={{ fontWeight: 600 }}>Deskripsi:</Typography>
-          <Typography>{listDetailDestinasi.destinasi_desc}</Typography>
+          <Typography sx={{ textAlign: "justify" }}>
+            {listDetailDestinasi.destinasi_desc}
+          </Typography>
         </Grid>
 
         <Grid sx={{ mb: 2 }}>

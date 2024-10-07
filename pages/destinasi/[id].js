@@ -52,11 +52,7 @@ const Destinasi = () => {
     //   )}&jenisdestinasiid=${encodeURIComponent(item.jenisdestinasi_id)}`
     // );
 
-    router.push(
-      `/destinasi/detail/${item.destinasi_id}?name=${encodeURIComponent(
-        item.destinasi_name
-      )}&jenisdestinasiid=${encodeURIComponent(item.jenisdestinasi_id)}`
-    );
+    router.push(`/destinasi/detail/${item.destinasi_id}`);
   };
 
   const formatTime = (isoString) => {
@@ -81,9 +77,14 @@ const Destinasi = () => {
         jenisdestinasiid,
         value
       );
-      const { data, metadata } = responseGetDestinasi.data;
-      setListDestinasi(data);
-      setJenisDestinasiName(data[0].jenisdestinasi_kat.toUpperCase());
+      const { data } = responseGetDestinasi.data;
+      if (data === null) {
+        displayToast("error", "Data destinasi tidak ada");
+      } else {
+        setListDestinasi(data);
+        setJenisDestinasiName(data[0].jenisdestinasi_kat.toUpperCase());
+      }
+
       setIsLoading(false);
     } catch (error) {
       console.error(error);

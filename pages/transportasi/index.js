@@ -4,6 +4,7 @@ import {
   CardContent,
   CircularProgress,
   debounce,
+  Divider,
   Grid,
   Modal,
   Tab,
@@ -63,6 +64,20 @@ const Transportasi = () => {
     }
   }, []);
 
+  // Function to group transport by type
+  const groupByTransportType = (list) => {
+    return list.reduce((acc, curr) => {
+      const type = curr.tipetransportasi_name;
+      if (!acc[type]) {
+        acc[type] = [];
+      }
+      acc[type].push(curr);
+      return acc;
+    }, {});
+  };
+
+  const groupedTransport = groupByTransportType(listTransportasi);
+
   return (
     <Layout>
       <Box sx={{ pl: { xs: 2, sm: 4 }, pr: { xs: 2, sm: 4 } }}>
@@ -78,9 +93,11 @@ const Transportasi = () => {
           </Grid>
         </Grid>
 
+        <Divider sx={{ mb: 2, borderWidth: 0.5, borderColor: "black" }} />
+
         <Grid container>
           <Grid item xs={12}>
-            {!listTransportasi ? (
+            {!listTransportasi.length ? (
               <Typography
                 sx={{ mt: 10, fontWeight: 600, color: "red", mb: 20 }}
                 align="center"
@@ -88,50 +105,70 @@ const Transportasi = () => {
                 TIDAK ADA DATA TRANSPORTASI!
               </Typography>
             ) : (
-              <Box >
-                {" "}
-                <Grid container spacing={3} justifyContent="center">
-                  {listTransportasi.map((data, index) => (
-                    <Grid item xs={12} sm={6} md={3} key={index}>
-                      <Card
-                        sx={{
-                          display: "flex",
-                          flexDirection: { xs: "column", sm: "row" }, // Adjust for mobile
-                          borderRadius: 4,
-                          boxShadow: 10,
-                          // mb: 2,
-                        }}
-                      >
-                        <CardContent>
-                          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                            {data.tipetransportasi_name.toUpperCase()}
-                          </Typography>
-                          <Typography
-                            variant="body1"
-                            sx={{ mb: 1.5 }}
-                            color="text.secondary"
+              <Box>
+                {/* Iterate through each transport type */}
+                {Object.keys(groupedTransport).map((transportType, idx) => (
+                  <Box key={idx} sx={{ mb: 4 }}>
+                    <Typography
+                      variant="h6"
+                      sx={{ fontWeight: 600, mb: 2 }}
+                      color="primary"
+                      align="center"
+                    >
+                      {transportType.toUpperCase()}
+                    </Typography>
+                    <Grid container spacing={3} justifyContent="center">
+                      {groupedTransport[transportType].map((data, index) => (
+                        <Grid item xs={12} sm={6} md={3} key={index}>
+                          <Card
+                            sx={{
+                              display: "flex",
+                              flexDirection: { xs: "column", sm: "row" },
+                              borderRadius: 4,
+                              boxShadow: 10,
+                            }}
                           >
-                            Rute:{" "}
-                            {data.rute_no !== ""
-                              ? data.rute_no +
-                                " (" +
-                                data.tujuan_awal +
-                                " - " +
-                                data.tujuan_akhir +
-                                ")"
-                              : data.tujuan_awal + " - " + data.tujuan_akhir}
-                          </Typography>
-                          <Typography variant="body2">
-                            Turun di: {data.pemberhentian_name}{" "}
-                            {data.pemberhentian_perbaikanyn === "Y"
-                              ? " (sedang dalam perbaikan)"
-                              : ""}
-                          </Typography>
-                        </CardContent>
-                      </Card>
+                            <CardContent>
+                              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                                {data.tipetransportasi_name.toUpperCase()}
+                              </Typography>
+                              <Typography
+                                variant="body1"
+                                sx={{ mb: 1.5 }}
+                                color="text.secondary"
+                              >
+                                Rute:{" "}
+                                {data.rute_no !== ""
+                                  ? data.rute_no +
+                                    " (" +
+                                    data.tujuan_awal +
+                                    " - " +
+                                    data.tujuan_akhir +
+                                    ")"
+                                  : data.tujuan_awal +
+                                    " - " +
+                                    data.tujuan_akhir}
+                              </Typography>
+                              <Typography variant="body2">
+                                Turun di: {data.pemberhentian_name}{" "}
+                                {data.pemberhentian_perbaikanyn === "Y" ? (
+                                  <Typography
+                                    component="span"
+                                    sx={{ color: "red" }}
+                                  >
+                                    (sedang dalam perbaikan)
+                                  </Typography>
+                                ) : (
+                                  ""
+                                )}
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                      ))}
                     </Grid>
-                  ))}
-                </Grid>
+                  </Box>
+                ))}
               </Box>
             )}
           </Grid>
