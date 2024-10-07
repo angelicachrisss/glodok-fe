@@ -9,13 +9,14 @@ const Footer = () => {
           container
           spacing={3}
           justifyContent="space-between"
+          // justifyContent="center"
           alignItems="center"
         >
           <Grid
             item
             xs={12}
             sm={4}
-            sx={{ textAlign: { xs: "center", sm: "left" } }}
+            sx={{ textAlign: { xs: "center", sm: "center" } }}
           >
             <img
               src="/static/logo/pesonaglodok.png"
@@ -27,7 +28,7 @@ const Footer = () => {
           <Grid
             item
             xs={12}
-            sm={4}
+            sm={8}
             sx={{ textAlign: { xs: "center", sm: "left" } }}
           >
             <Typography variant="h6" color="white">

@@ -36,7 +36,8 @@ const Home = () => {
 
       setTempData(data.sejarahberanda_isi);
     } catch (error) {
-      displayToast("error", error.message);
+      // displayToast("error", error.message);
+      displayToast("error", "Terjadi kesalahan! Silahkan Refresh Halaman");
     } finally {
       setIsLoading(false);
     }
@@ -52,6 +53,7 @@ const Home = () => {
       setVideos(videoLinks);
     } catch (error) {
       // displayToast("error", error.message);
+      displayToast("error", "Terjadi kesalahan! Silahkan Refresh Halaman");
     }
   }
 
@@ -97,7 +99,7 @@ const Home = () => {
           </Grid>
         </Grid>
 
-        {videos.length > 0 && ( 
+        {videos.length > 0 && (
           <>
             <Typography
               variant="h5"

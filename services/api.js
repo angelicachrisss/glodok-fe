@@ -40,9 +40,9 @@ const getReview = async (rating, params) => {
 };
 
 //destinasi
-const getDestinasi = async (ket, labelhalal, name) => {
+const getDestinasi = async (jenisdestinasiid, name) => {
   return await api.get(
-    `/glodok/v1/data?type=getalldestinasi&ket=${ket}&labelhalal=${labelhalal}&destinasiname=${name}`
+    `/glodok/v1/data?type=getalldestinasi&jenisdestinasiid=${jenisdestinasiid}&destinasiname=${name}`
   );
 };
 
@@ -52,9 +52,31 @@ const getDestinasiByID = async (id) => {
   );
 };
 
+const getJenisDestinasiDropDown = async () => {
+  return await api.get(`/glodok/v1/data?type=getjenisdestinasidropdown`);
+};
+
 //maps
 const getMaps = async () => {
   return await api.get(`/glodok/v1/data?type=getmaps`);
+};
+
+//transportasi
+const getTransportasi = async (statusperbaikan) => {
+  return await api.get(
+    `/glodok/v1/data?type=gettransportasiml&perbaikanyn=${statusperbaikan}`
+  );
+};
+
+//berita
+const getBerita = async (judul, params) => {
+  return await api.get(`/glodok/v1/data?type=getberitaml&judul=${judul}`, {
+    params,
+  });
+};
+
+const getBeritaByID = async (id) => {
+  return await api.get(`/glodok/v1/data?type=getberitabyid&beritaid=${id}`);
 };
 
 export default {
@@ -70,7 +92,15 @@ export default {
   //destinasi
   getDestinasi,
   getDestinasiByID,
+  getJenisDestinasiDropDown,
 
   //maps
   getMaps,
+
+  //transportasi
+  getTransportasi,
+
+  //berita
+  getBerita,
+  getBeritaByID,
 };
