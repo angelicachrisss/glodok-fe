@@ -265,8 +265,8 @@ const DetailDestinasi = () => {
               }}
             >
               {totalReviews !== 0
-                ? `${avgRating} - ${totalReviews} ULASAN`
-                : `${avgRating} - BELUM ADA ULASAN`}
+                ? `${avgRating.toFixed(1)} - ${totalReviews} ULASAN`
+                : `${avgRating.toFixed(1)} - BELUM ADA ULASAN`}
               {totalReviews !== 0 && (
                 <IconButton
                   color="black"

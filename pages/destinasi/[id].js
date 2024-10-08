@@ -165,7 +165,7 @@ const Destinasi = () => {
           </Grid>
         </Grid>
 
-        <Grid container>
+        {/* <Grid container>
           <Grid item xs={12}>
             {!listDestinasi ? (
               <Typography
@@ -266,6 +266,139 @@ const Destinasi = () => {
                           >
                             Lihat Detail
                           </Button>
+                        </Box>
+
+                        <Box>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ mt: 1 }}
+                          >
+                            {item.destinasi_alamat}
+                          </Typography>
+                          <Typography
+                            sx={{ mt: 1 }}
+                            variant="body2"
+                            color="text.secondary"
+                          >
+                            Hari Buka: {item.destinasi_hbuka} -{" "}
+                            {item.destinasi_htutup} (
+                            {formatTime(item.destinasi_jbuka)} -{" "}
+                            {formatTime(item.destinasi_jtutup)})
+                          </Typography>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Box>
+            )}
+          </Grid>
+        </Grid> */}
+
+        <Grid container>
+          <Grid item xs={12}>
+            {!listDestinasi ? (
+              <Typography
+                sx={{ mt: 10, fontWeight: 600, color: "red", mb: 20 }}
+                align="center"
+              >
+                TIDAK ADA DATA DESTINASI {jenisDestinasiName}!
+              </Typography>
+            ) : (
+              <Box>
+                <Typography
+                  sx={{ mt: 2, mb: 2, fontWeight: 600 }}
+                  align="center"
+                  variant="h6"
+                >
+                  LIST DESTINASI {jenisDestinasiName}
+                </Typography>
+                {listDestinasi.map((item) => (
+                  <Grid item xs={12} key={item.destinasi_id}>
+                    <Card
+                      sx={{
+                        display: "flex",
+                        flexDirection: { xs: "column", sm: "row" },
+                        borderRadius: 4,
+                        boxShadow: 3,
+                        mb: 3,
+                      }}
+                    >
+                      <CardMedia
+                        component="img"
+                        sx={{
+                          width: { xs: "100%", sm: 150 },
+                          height: { xs: 200, sm: "auto" },
+                        }}
+                        src={item.destinasi_gambar_url}
+                        alt={item.destinasi_name}
+                      />
+                      <CardContent
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          width: "100%",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            flexDirection: { xs: "column", sm: "row" },
+                          }}
+                        >
+                          <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                            {item.destinasi_name}
+                          </Typography>
+                          <Button
+                            size="small"
+                            sx={{
+                              alignSelf: { xs: "flex-start", sm: "flex-end" },
+                            }}
+                            onClick={() => pindahKeDetail(item, "W")}
+                            variant={
+                              window.innerWidth < 600 ? "contained" : "text"
+                            }
+                          >
+                            Lihat Detail
+                          </Button>
+                        </Box>
+
+                        {/* Chip untuk Halal dan Otentik */}
+                        <Box sx={{ display: "flex", flexWrap: "wrap", mt: 1 }}>
+                          {item.destinasi_labelhalalyn === "Y" && (
+                            <Chip
+                              color="success"
+                              label="Halal"
+                              size="small"
+                              sx={{ mr: 0.5, mb: 0.5 }}
+                            />
+                          )}
+                          {item.destinasi_labelhalalyn === "N" && (
+                            <Chip
+                              color="error"
+                              label="Non-Halal"
+                              size="small"
+                              sx={{ mr: 0.5, mb: 0.5 }}
+                            />
+                          )}
+                          {item.destinasi_otentikyn === "Y" && (
+                            <Chip
+                              color="success"
+                              label="Otentik"
+                              size="small"
+                              sx={{ mr: 0.5, mb: 0.5 }}
+                            />
+                          )}
+                          {item.destinasi_otentikyn === "N" && (
+                            <Chip
+                              color="error"
+                              label="Non-Otentik"
+                              size="small"
+                              sx={{ mr: 0.5, mb: 0.5 }}
+                            />
+                          )}
                         </Box>
 
                         <Box>
