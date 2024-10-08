@@ -246,40 +246,40 @@ const DetailDestinasi = () => {
           </Grid>
         </Grid>
 
-        {totalReviews !== 0 ? (
-          <Grid container sx={{ mb: 2 }} alignItems="center">
-            <Grid item xs={1} sm={0.4}>
-              <StarIcon
-                sx={{
-                  color: "orange",
-                  fontSize: { xs: "20px", sm: "inherit" },
-                }}
-              />
-            </Grid>
-            <Grid item xs={8} sm={5}>
-              <Typography
-                sx={{
-                  color: "black",
-                  fontSize: { xs: "14px", sm: "16px" }, // Responsive font size
-                  fontWeight: "bold",
-                  mb: 0.5,
-                }}
-              >
-                {avgRating} - {totalReviews} ULASAN
+        <Grid container sx={{ mb: 2 }} alignItems="center">
+          <Grid item xs={1} sm={0.3}>
+            <StarIcon
+              sx={{
+                color: "orange",
+                fontSize: { xs: "20px", sm: "inherit" },
+              }}
+            />
+          </Grid>
+          <Grid item xs={8} sm={5}>
+            <Typography
+              sx={{
+                color: "black",
+                fontSize: { xs: "14px", sm: "16px" },
+                fontWeight: "bold",
+                mb: 0.5,
+              }}
+            >
+              {totalReviews !== 0
+                ? `${avgRating} - ${totalReviews} ULASAN`
+                : `${avgRating} - BELUM ADA ULASAN`}
+              {totalReviews !== 0 && (
                 <IconButton
                   color="black"
                   size="small"
-                  sx={{ mb: 0.5 }}
+                  sx={{ mb: 0.5, ml: 1 }} // Add some margin for spacing
                   onClick={() => PindahKeDetail(destinasiID)}
                 >
                   <NavigateNextIcon fontSize="inherit" />
                 </IconButton>
-              </Typography>
-            </Grid>
+              )}
+            </Typography>
           </Grid>
-        ) : (
-          <Grid></Grid>
-        )}
+        </Grid>
 
         {listDetailDestinasi.destinasi_labelhalalyn && (
           <Grid sx={{ mb: 2 }}>
