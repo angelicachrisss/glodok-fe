@@ -42,7 +42,13 @@ const SwipedPictures = () => {
 
   return (
     <Box
-      sx={{ flexGrow: 1, maxWidth: "100%", margin: "auto", overflow: "hidden" }}
+      sx={{
+        flexGrow: 1,
+        maxWidth: "100%",
+        margin: "auto",
+        overflow: "hidden",
+        mt: { xs: -1 },
+      }}
     >
       <Paper sx={{ position: "relative", overflow: "hidden" }}>
         <AutoPlaySwipeableViews
