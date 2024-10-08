@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -18,6 +18,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useRouter } from "next/router";
 import {
   Collapse,
+  debounce,
   Divider,
   ListItemButton,
   ListItemIcon,
@@ -36,12 +37,22 @@ import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
 import RateReviewIcon from "@mui/icons-material/RateReview";
 import ThreeSixtyIcon from "@mui/icons-material/ThreeSixty";
+import api from "../services/api";
+import useToast from "../utils/toast";
+import CircleIcon from "@mui/icons-material/Circle";
 
 const Header = () => {
+  const [displayToast] = useToast();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const router = useRouter();
   const [open, setOpen] = useState(true);
+  const [listJenisDestinasi, setListJenisDestinasi] = useState([]);
+
+  const debounceJenisDestinasi = useCallback(
+    debounce(getJenisDestinasi, 400),
+    []
+  );
 
   const handleClick = () => {
     setOpen(!open);
@@ -62,6 +73,27 @@ const Header = () => {
   const handleCloseDrawer = () => {
     setDrawerOpen(false); // Hanya tutup drawer saat diperlukan
   };
+
+  async function getJenisDestinasi() {
+    try {
+      const response = await api.getJenisDestinasiDropDown();
+      const { data } = response.data;
+
+      // const jenisDestinasi = data.map((item) => item.jenisdestinasi_kat);
+      const jenisDestinasi = data.map((item) => ({
+        name: item.jenisdestinasi_kat,
+        // route: `/destinasi/${item.jenisdestinasi_kat.toLowerCase()}`,
+        route: `/destinasi/${item.jenisdestinasi_id}`,
+      }));
+      setListJenisDestinasi(jenisDestinasi);
+    } catch (error) {
+      displayToast("error", "Terjadi kesalahan! Silahkan Refresh Halaman");
+    }
+  }
+
+  useEffect(() => {
+    debounceJenisDestinasi();
+  }, []);
 
   const drawer = (
     <Box sx={{ width: 250 }}>
@@ -117,48 +149,21 @@ const Header = () => {
         </ListItemButton>
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItemButton
-              sx={{ pl: 4 }}
-              onClick={() => {
-                handleCloseDrawer(); // Tutup drawer saat klik item
-                router.push("/destinasi/warisan");
-              }}
-            >
-              <ListItemIcon>
-                <ApartmentIcon />
-              </ListItemIcon>
-              <ListItemText primary="Warisan" />
-            </ListItemButton>
-          </List>
-
-          <List component="div" disablePadding>
-            <ListItemButton
-              sx={{ pl: 4 }}
-              onClick={() => {
-                handleCloseDrawer(); // Tutup drawer saat klik item
-                router.push("/destinasi/kuliner");
-              }}
-            >
-              <ListItemIcon>
-                <FastfoodIcon />
-              </ListItemIcon>
-              <ListItemText primary="Kuliner" />
-            </ListItemButton>
-          </List>
-
-          <List component="div" disablePadding>
-            <ListItemButton
-              sx={{ pl: 4 }}
-              onClick={() => {
-                handleCloseDrawer(); // Tutup drawer saat klik item
-                router.push("/destinasi/religi");
-              }}
-            >
-              <ListItemIcon>
-                <TempleBuddhistIcon />
-              </ListItemIcon>
-              <ListItemText primary="Religi" />
-            </ListItemButton>
+            {listJenisDestinasi.map((destinasi, index) => (
+              <ListItemButton
+                key={index}
+                sx={{ pl: 4 }}
+                onClick={() => {
+                  handleCloseDrawer();
+                  router.push(destinasi.route);
+                }}
+              >
+                <ListItemIcon>
+                  <CircleIcon fontSize="5" />
+                </ListItemIcon>
+                <ListItemText primary={destinasi.name} />
+              </ListItemButton>
+            ))}
           </List>
         </Collapse>
 
@@ -254,31 +259,17 @@ const Header = () => {
               open={Boolean(anchorEl)}
               onClose={handleDestinasiClose}
             >
-              <MenuItem
-                onClick={() => {
-                  router.push("/destinasi/warisan");
-                  handleDestinasiClose();
-                }}
-                sx={{ width: 120 }}
-              >
-                Warisan
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  router.push("/destinasi/kuliner");
-                  handleDestinasiClose();
-                }}
-              >
-                Kuliner
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  router.push("/destinasi/religi");
-                  handleDestinasiClose();
-                }}
-              >
-                Religi
-              </MenuItem>
+              {listJenisDestinasi.map((destinasi, index) => (
+                <MenuItem
+                  key={index}
+                  onClick={() => {
+                    router.push(destinasi.route);
+                    handleDestinasiClose();
+                  }}
+                >
+                  {destinasi.name}
+                </MenuItem>
+              ))}
             </Menu>
 
             <Button

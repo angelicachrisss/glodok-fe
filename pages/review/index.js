@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Box,
   Button,
   Chip,
@@ -74,49 +75,23 @@ const Review = () => {
   const [value, setValue] = useState(0);
   const [nama, setNama] = useState("");
   const [ulasan, setUlasan] = useState("");
-  const [listReview, setListReview] = useState([]);
-  const [totalData, setTotalData] = useState(0);
-  const [totalPage, setTotalPage] = useState(0);
-  const [rating, setRating] = useState("");
-
-  const [params, setParams] = useState({
-    page: 0,
-    length: 6,
-  });
+  const [listDestinasi, setListDestinasi] = useState([]);
+  const [selectedDestinasi, setSelectedDestinasi] = useState(null);
 
   const debounceInsertReview = useCallback(debounce(insertReview, 400), []);
-  const debounceGetReview = useCallback(debounce(getReview, 400), []);
-
-  const ratingOptions = [
-    { label: "All Ratings", value: "" },
-    { icon: <StarIcon />, label: "5", value: "5" },
-    { icon: <StarIcon />, label: "4", value: "4" },
-    { icon: <StarIcon />, label: "3", value: "3" },
-    { icon: <StarIcon />, label: "2", value: "2" },
-    { icon: <StarIcon />, label: "1", value: "1" },
-  ];
-
-  const handleChipClick = (value) => {
-    setRating(value);
-    setParams({ ...params, page: 0 }); // Reset to the first page on filter
-    debounceGetReview(value, params);
-  };
+  const debounceGetDestinasi = useCallback(debounce(getDestinasi, 400), []);
 
   const capitalizeFirstLetter = (str) => {
     if (str.length === 0) return str; // Jika string kosong, kembalikan string kosong
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
-  const handlePageChange = (event, newPage) => {
-    setParams((prevParams) => ({
-      ...prevParams,
-      page: newPage - 1, // Pagination mulai dari 1, sedangkan params.page mulai dari 0
-    }));
-  };
+  async function insertReview(rating, id, name, desc) {
+    console.log("id", id);
 
-  async function insertReview(tab, rating, name, desc) {
     const payload = {
       review_rating: rating,
+      destinasi_id: id,
       reviewer_name: capitalizeFirstLetter(name),
       review_desc: capitalizeFirstLetter(desc),
     };
@@ -130,12 +105,7 @@ const Review = () => {
         setValue(0);
         setNama("");
         setUlasan("");
-        if (tab === "") {
-          debounceGetReview("", { page: 0, length: 6 });
-        } else {
-          debounceGetReview(tab, { page: 0, length: 6 });
-        }
-        // setParams({ page: 0, length: 6 });
+        setSelectedDestinasi(null);
       } else {
         displayToast("error", "Gagal Membuat Review!");
       }
@@ -144,25 +114,20 @@ const Review = () => {
     }
   }
 
-  async function getReview(rating, params) {
+  async function getDestinasi() {
     try {
-      const responseGetReview = await api.getReview(rating, params);
-      const { data, metadata } = responseGetReview.data;
-      setListReview(data);
-      setTotalData(metadata.total_data);
-      setTotalPage(ceil(metadata.total_data / params.length)); // Perbaiki pembagian total data
+      const response = await api.getDestinasiDropDown();
+      const { data } = response.data;
+
+      setListDestinasi(data);
     } catch (error) {
-      console.error(error);
+      displayToast("error", "Terjadi kesalahan! Silahkan Refresh Halaman");
     }
   }
 
   useEffect(() => {
-    if (rating === "") {
-      debounceGetReview("", params);
-    } else {
-      debounceGetReview(rating, params);
-    }
-  }, [params, rating]);
+    debounceGetDestinasi();
+  }, []);
 
   return (
     <Layout>
@@ -208,6 +173,26 @@ const Review = () => {
 
         <Grid container sx={{ mb: 2 }}>
           <Grid item xs={12} md={10} mx="auto">
+            <Autocomplete
+              value={selectedDestinasi}
+              onChange={(event, newValue) => {
+                setSelectedDestinasi(newValue);
+              }}
+              options={listDestinasi}
+              getOptionLabel={(option) => option.destinasi_name || ""}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Pilih Destinasi"
+                  variant="outlined"
+                />
+              )}
+            />
+          </Grid>
+        </Grid>
+
+        <Grid container sx={{ mb: 2 }}>
+          <Grid item xs={12} md={10} mx="auto">
             <TextField
               fullWidth
               label="Masukkan ulasan anda disini"
@@ -226,132 +211,37 @@ const Review = () => {
               fullWidth
               variant="contained"
               startIcon={<SaveIcon />}
-              disabled={value === 0 || value === null || !nama || !ulasan}
-              onClick={() => debounceInsertReview(rating, value, nama, ulasan)}
+              disabled={
+                value === 0 ||
+                value === null ||
+                !nama ||
+                !ulasan ||
+                !selectedDestinasi
+              }
+              onClick={() => {
+                console.log(
+                  "masuk",
+                  value,
+                  selectedDestinasi.destinasi_id,
+                  nama,
+                  ulasan
+                );
+
+                debounceInsertReview(
+                  value,
+                  selectedDestinasi.destinasi_id,
+                  nama,
+                  ulasan
+                );
+              }}
+              // onClick={() => {
+              //   console.log("masuk", selectedDestinasi.destinasi_id);
+              // }}
             >
               SIMPAN
             </Button>
           </Grid>
         </Grid>
-
-        <Divider sx={{ mt: 3 }} />
-      </Box>
-
-      <Grid container>
-        <Grid item xs={12}>
-          <Typography
-            variant="h5"
-            align="center"
-            sx={{ mb: 2, mt: 1, fontWeight: 600 }}
-          >
-            APA KATA MEREKA?
-          </Typography>
-        </Grid>
-      </Grid>
-
-      <Grid container spacing={1} justifyContent="center" sx={{ mb: 2 }}>
-        {ratingOptions.map((option) => (
-          <Grid item key={option.value}>
-            <Chip
-              label={option.label}
-              variant={rating === option.value ? "filled" : "outlined"}
-              color={rating === option.value ? "primary" : "default"}
-              onClick={() => handleChipClick(option.value)}
-              icon={option.icon}
-              size="small"
-            />
-          </Grid>
-        ))}
-      </Grid>
-
-      <Grid container>
-        {totalData !== 0 ? (
-          <Grid item xs={12}>
-            <Typography variant="body1" align="center" sx={{ mb: 2 }}>
-              Data Review : {totalData}
-            </Typography>
-          </Grid>
-        ) : (
-          <Typography></Typography>
-        )}
-      </Grid>
-
-      {/* <Grid container spacing={2} sx={{ pl: 6, pr: 6 }}>
-        {listReview.map((review) => (
-          <Grid item xs={12} sm={6} key={review.review_id}>
-            <Paper style={{ padding: 16, marginBottom: 16 }}>
-              <Typography variant="h6" component="div">
-                {review.reviewer_name}
-              </Typography>
-              <Rating
-                name="read-only"
-                value={review.review_rating}
-                readOnly
-                precision={0.5}
-              />
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                style={{ margin: "8px 0" }}
-              >
-                {review.review_desc}
-              </Typography>
-              <Typography variant="caption" color="textSecondary">
-                {new Date(review.review_date).toLocaleDateString()}
-              </Typography>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid> */}
-
-      <Grid container spacing={2} sx={{ pl: 6, pr: 6 }}>
-        {listReview !== null ? (
-          listReview &&
-          listReview.map((review, index) => (
-            <Grid item xs={12} sm={6} key={index}>
-              <Paper style={{ padding: 16, marginBottom: 16 }}>
-                <Typography variant="h6" component="div">
-                  {review.reviewer_name}
-                </Typography>
-                <Rating
-                  name="read-only"
-                  value={review.review_rating}
-                  readOnly
-                  precision={0.5}
-                />
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  style={{ margin: "8px 0" }}
-                >
-                  {review.review_desc}
-                </Typography>
-                <Typography variant="caption" color="textSecondary">
-                  Tanggal Review:{" "}
-                  {/* {new Date(review.review_date).toLocaleDateString()} */}
-                  {formatDate(review.review_date)}
-                </Typography>
-              </Paper>
-            </Grid>
-          ))
-        ) : (
-          <Grid item xs={12}>
-            <Typography variant="h6" align="center" color="textSecondary">
-              Tidak ada ulasan.
-            </Typography>
-          </Grid>
-        )}
-      </Grid>
-
-      <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-        <Pagination
-          count={totalPage}
-          page={params.page + 1}
-          shape="rounded"
-          variant="outlined"
-          color="primary"
-          onChange={handlePageChange}
-        />
       </Box>
     </Layout>
   );

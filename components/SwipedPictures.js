@@ -1,42 +1,62 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
-import { Paper, Typography } from "@mui/material";
+import { Paper, Box, debounce } from "@mui/material";
+import api from "../services/api";
+import useToast from "../utils/toast";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-const images = [
-  "/static/bannerglodok/glodok1.png",
-  "/static/bannerglodok/glodok2.png",
-  "/static/bannerglodok/glodok3.png",
-  
-  // "https://storage.jakarta-tourism.go.id/public/articles/6e1e1472-adf4-479c-be63-b5109266f9b4.jpg",
-  // "https://asset.kompas.com/crops/G7xZBGRWwpO8pCo3hLVuoIaEzeg=/0x16:1600x1082/750x500/data/photo/2022/02/01/61f8c384ab993.jpeg",
-  // "https://asset.kompas.com/crops/pWbSOD8088vEpCFrRO9KC-BoYFw=/0x0:0x0/750x500/data/photo/2023/01/19/63c96eb935248.jpg",
-];
-
 const SwipedPictures = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [images, setImages] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
+
+  const debounceFotoBeranda = useCallback(debounce(getFotoBeranda, 400), []);
+
+  async function getFotoBeranda() {
+    try {
+      const response = await api.getFotoBeranda();
+      const { data } = response.data;
+
+      // Extract image URLs from the response
+      const imageUrls = data
+        .map((item) => item.fotoberanda_gambar_url)
+        .filter((url) => url);
+      setImages(imageUrls);
+    } catch (error) {
+      // displayToast("error", error.message);
+    }
+  }
+
+  useEffect(() => {
+    if (!isFetching) {
+      debounceFotoBeranda();
+      setIsFetching(true);
+    }
+  }, []);
 
   const handleStepChange = (step) => {
     setActiveStep(step);
   };
 
   return (
-    <div>
-      <Paper sx={{ flexGrow: 1, maxWidth: 1900, margin: "auto" }}>
+    <Box
+      sx={{ flexGrow: 1, maxWidth: "100%", margin: "auto", overflow: "hidden" }}
+    >
+      <Paper sx={{ position: "relative", overflow: "hidden" }}>
         <AutoPlaySwipeableViews
           index={activeStep}
           onChangeIndex={handleStepChange}
           axis="x"
+          enableMouseEvents
         >
           {images.map((img, index) => (
             <div
               key={index}
               style={{
+                height: "400px", // Set fixed height for the container
                 position: "relative",
-                height: 400, //buat atur tinggi lebarnya carousell
-                overflow: "hidden",
               }}
             >
               {Math.abs(activeStep - index) <= 2 ? (
@@ -44,9 +64,10 @@ const SwipedPictures = () => {
                   style={{
                     width: "100%",
                     height: "100%",
-                    objectFit: "cover", // Mengisi area kontainer tanpa distorsi
+                    objectFit: "cover", // Maintain aspect ratio
                     display: "block",
-                    maxWidth: "1900px",
+                    maxWidth: "100%", // Ensure it doesn't exceed container width
+                    maxHeight: "100%", // Ensure it doesn't exceed container height
                   }}
                   src={img}
                   alt={`Step ${index}`}
@@ -56,10 +77,7 @@ const SwipedPictures = () => {
           ))}
         </AutoPlaySwipeableViews>
       </Paper>
-      {/* <Typography variant="caption" align="center">{`Photo ${
-        activeStep + 1
-      } of ${images.length}`}</Typography> */}
-    </div>
+    </Box>
   );
 };
 

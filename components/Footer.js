@@ -9,13 +9,14 @@ const Footer = () => {
           container
           spacing={3}
           justifyContent="space-between"
+          // justifyContent="center"
           alignItems="center"
         >
           <Grid
             item
             xs={12}
             sm={4}
-            sx={{ textAlign: { xs: "center", sm: "left" } }}
+            sx={{ textAlign: { xs: "center", sm: "center" } }}
           >
             <img
               src="/static/logo/pesonaglodok.png"
@@ -24,118 +25,10 @@ const Footer = () => {
             />
           </Grid>
 
-          <Grid item xs={6} sm={2}>
-            <Grid
-              container
-              spacing={1}
-              direction="column"
-              alignItems={{ xs: "center", sm: "flex-start" }}
-            >
-              <Grid item>
-                <Typography variant="h6" color="white">
-                  Products
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="body2" color="white">
-                  <Link href="/" color="inherit">
-                    Home
-                  </Link>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="body2" color="white">
-                  <Link href="/destinasi/warisan" color="inherit">
-                    Destinasi Warisan
-                  </Link>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="body2" color="white">
-                  <Link href="/destinasi/kuliner" color="inherit">
-                    Destinasi Kuliner
-                  </Link>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="body2" color="white">
-                  <Link href="/destinasi/religi" color="inherit">
-                    Destinasi Religi
-                  </Link>
-                </Typography>
-              </Grid>
-              {/* <Grid item>
-                <Typography variant="body2" color="white">
-                  <Link href="/virtualtour" color="inherit">
-                    Virtual Tour
-                  </Link>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="body2" color="white">
-                  <Link href="#" color="inherit">
-                    Transportasi
-                  </Link>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="body2" color="white">
-                  <Link href="#" color="inherit">
-                    Berita
-                  </Link>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="body2" color="white">
-                  <Link href="#" color="inherit">
-                    Review
-                  </Link>
-                </Typography>
-              </Grid> */}
-            </Grid>
-          </Grid>
-
-          <Grid item xs={6} sm={2}>
-            <Grid
-              container
-              spacing={1}
-              direction="column"
-              alignItems={{ xs: "center", sm: "flex-start" }}
-            >
-              <Grid item>
-                <Typography variant="body2" color="white">
-                  <Link href="/virtualtour" color="inherit">
-                    Virtual Tour
-                  </Link>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="body2" color="white">
-                  <Link href="/transportasi" color="inherit">
-                    Transportasi
-                  </Link>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="body2" color="white">
-                  <Link href="/berita" color="inherit">
-                    Berita
-                  </Link>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="body2" color="white">
-                  <Link href="/review" color="inherit">
-                    Review
-                  </Link>
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
           <Grid
             item
             xs={12}
-            sm={4}
+            sm={8}
             sx={{ textAlign: { xs: "center", sm: "left" } }}
           >
             <Typography variant="h6" color="white">
