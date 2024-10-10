@@ -2,8 +2,10 @@ import {
   Autocomplete,
   Box,
   Button,
+  Checkbox,
   Chip,
   Divider,
+  FormControlLabel,
   Grid,
   Pagination,
   Paper,
@@ -20,6 +22,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import api from "../../services/api";
 import useToast from "../../utils/toast";
 import { ceil, debounce } from "lodash";
+import { getStorage } from "../../utils/storage";
 
 const CustomStarIcon = styled(StarIcon)(({ theme }) => ({
   fontSize: 40, // Ganti ukuran sesuai kebutuhan
@@ -29,54 +32,16 @@ const CustomStarBorderIcon = styled(StarBorderIcon)(({ theme }) => ({
   fontSize: 40, // Ganti ukuran sesuai kebutuhan
 }));
 
-const formatDate = (dateString) => {
-  // Create a new Date object from the date string
-  const date = new Date(dateString);
-
-  // Handle time zone adjustment if necessary
-  const options = { timeZone: "UTC", hour12: false };
-
-  const day = String(
-    date.toLocaleString("en-GB", { day: "2-digit", timeZone: "UTC" })
-  ).padStart(2, "0");
-  const month = String(
-    date.toLocaleString("en-GB", { month: "2-digit", timeZone: "UTC" })
-  ).padStart(2, "0");
-  const year = date.toLocaleString("en-GB", {
-    year: "numeric",
-    timeZone: "UTC",
-  });
-  const hours = String(
-    date
-      .toLocaleString("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-        timeZone: "UTC",
-      })
-      .split(":")[0]
-  ).padStart(2, "0");
-  const minutes = String(
-    date
-      .toLocaleString("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-        timeZone: "UTC",
-      })
-      .split(":")[1]
-  ).padStart(2, "0");
-
-  return `${day}-${month}-${year} - ${hours}:${minutes}`;
-};
-
 const Review = () => {
   const [displayToast] = useToast();
   const [value, setValue] = useState(0);
-  const [nama, setNama] = useState("");
   const [ulasan, setUlasan] = useState("");
   const [listDestinasi, setListDestinasi] = useState([]);
   const [selectedDestinasi, setSelectedDestinasi] = useState(null);
+  const [checked, setChecked] = useState(false);
+
+  const token = getStorage("ket_masuk");
+  const id = getStorage("userid");
 
   const debounceInsertReview = useCallback(debounce(insertReview, 400), []);
   const debounceGetDestinasi = useCallback(debounce(getDestinasi, 400), []);
@@ -86,14 +51,15 @@ const Review = () => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
-  async function insertReview(rating, id, name, desc) {
+  async function insertReview(rating, id, userid, desc, anon) {
     console.log("id", id);
 
     const payload = {
       review_rating: rating,
       destinasi_id: id,
-      reviewer_name: capitalizeFirstLetter(name),
+      user_id: userid,
       review_desc: capitalizeFirstLetter(desc),
+      review_anonyn: anon,
     };
 
     try {
@@ -103,9 +69,9 @@ const Review = () => {
       if (data === "Berhasil") {
         displayToast("success", "Berhasil Membuat Review!");
         setValue(0);
-        setNama("");
         setUlasan("");
         setSelectedDestinasi(null);
+        setChecked(false);
       } else {
         displayToast("error", "Gagal Membuat Review!");
       }
@@ -131,118 +97,131 @@ const Review = () => {
 
   return (
     <Layout>
-      <Box sx={{ pl: 1, pr: 1 }}>
-        <Grid container>
-          <Grid item xs={12}>
-            <Typography
-              variant="h5"
-              align="center"
-              sx={{ mb: 2, mt: 3, fontWeight: 600 }}
-            >
-              BERIKAN ULASAN GLODOK PANCORAN DI BAWAH INI!
-            </Typography>
+      {!token ? (
+        <Box sx={{ pl: 1, pr: 1 }}>
+          <Typography
+            variant="h5"
+            align="center"
+            sx={{ mb: 2, mt: 3, fontWeight: 600 }}
+          >
+            MAAF, ANDA TIDAK DAPAT MENGAKSES HALAMAN REVIEW!
+          </Typography>
+          <Typography
+            variant="body1"
+            align="center"
+            sx={{ mb: 2, fontWeight: 400 }}
+          >
+            Silahkan masuk terlebih dahulu ke halaman <a href="/login">LOGIN</a>{" "}
+            untuk memberikan ulasan.
+          </Typography>
+        </Box>
+      ) : (
+        <Box sx={{ pl: 1, pr: 1 }}>
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography
+                variant="h5"
+                align="center"
+                sx={{ mb: 2, mt: 3, fontWeight: 600 }}
+              >
+                BERIKAN ULASAN GLODOK PANCORAN DI BAWAH INI!
+              </Typography>
+            </Grid>
           </Grid>
-        </Grid>
 
-        <Grid container sx={{ mb: 2 }}>
-          <Grid item xs={12} align="center">
-            <Rating
-              name="simple-controlled"
-              value={value}
-              onChange={(event, newValue) => {
-                setValue(newValue);
-                console.log("newValue: " + newValue);
-              }}
-              icon={<CustomStarIcon />}
-              emptyIcon={<CustomStarBorderIcon />}
-            />
+          <Grid container sx={{ mb: 2 }}>
+            <Grid item xs={12} align="center">
+              <Rating
+                name="simple-controlled"
+                value={value}
+                onChange={(event, newValue) => {
+                  setValue(newValue);
+                  console.log("newValue: " + newValue);
+                }}
+                icon={<CustomStarIcon />}
+                emptyIcon={<CustomStarBorderIcon />}
+              />
+            </Grid>
           </Grid>
-        </Grid>
 
-        <Grid container sx={{ mb: 2 }}>
-          <Grid item xs={12} md={10} mx="auto">
-            <TextField
-              fullWidth
-              label="Masukkan nama anda"
-              variant="outlined"
-              value={nama}
-              onChange={(e) => setNama(e.target.value)}
-            />
+          <Grid container sx={{ mb: 2 }}>
+            <Grid item xs={12} md={10} mx="auto">
+              <Autocomplete
+                value={selectedDestinasi}
+                onChange={(event, newValue) => {
+                  setSelectedDestinasi(newValue);
+                }}
+                options={listDestinasi}
+                getOptionLabel={(option) => option.destinasi_name || ""}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Pilih Destinasi"
+                    variant="outlined"
+                  />
+                )}
+              />
+            </Grid>
           </Grid>
-        </Grid>
 
-        <Grid container sx={{ mb: 2 }}>
-          <Grid item xs={12} md={10} mx="auto">
-            <Autocomplete
-              value={selectedDestinasi}
-              onChange={(event, newValue) => {
-                setSelectedDestinasi(newValue);
-              }}
-              options={listDestinasi}
-              getOptionLabel={(option) => option.destinasi_name || ""}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Pilih Destinasi"
-                  variant="outlined"
-                />
-              )}
-            />
+          <Grid container sx={{ mb: 2 }}>
+            <Grid item xs={12} md={10} mx="auto">
+              <TextField
+                fullWidth
+                label="Masukkan ulasan anda disini"
+                variant="outlined"
+                multiline
+                rows={4}
+                value={ulasan}
+                onChange={(e) => setUlasan(e.target.value)}
+              />
+            </Grid>
           </Grid>
-        </Grid>
 
-        <Grid container sx={{ mb: 2 }}>
-          <Grid item xs={12} md={10} mx="auto">
-            <TextField
-              fullWidth
-              label="Masukkan ulasan anda disini"
-              variant="outlined"
-              multiline
-              rows={4}
-              value={ulasan}
-              onChange={(e) => setUlasan(e.target.value)}
-            />
+          <Grid container sx={{ mb: 2 }}>
+            <Grid item xs={12} md={10} mx="auto">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={checked}
+                    onChange={(e) => setChecked(e.target.checked)}
+                  />
+                }
+                label="Sembunyikan namamu"
+                sx={{ mt: -2 }}
+              />
+            </Grid>
           </Grid>
-        </Grid>
 
-        <Grid container sx={{ mb: 2 }}>
-          <Grid item xs={12} md={10} mx="auto">
-            <Button
-              fullWidth
-              variant="contained"
-              startIcon={<SaveIcon />}
-              disabled={
-                value === 0 ||
-                value === null ||
-                !nama ||
-                !ulasan ||
-                !selectedDestinasi
-              }
-              onClick={() => {
-                console.log(
-                  "masuk",
-                  value,
-                  selectedDestinasi.destinasi_id,
-                  nama,
-                  ulasan
-                );
-
-                debounceInsertReview(
-                  value,
-                  selectedDestinasi.destinasi_id,
-                  nama,
-                  ulasan
-                );
-              }}
-              // onClick={() => {
-              //   console.log("masuk", selectedDestinasi.destinasi_id);
-              // }}
-            >
-              SIMPAN
-            </Button>
+          <Grid container sx={{ mb: 2 }}>
+            <Grid item xs={12} md={10} mx="auto">
+              <Button
+                fullWidth
+                variant="contained"
+                startIcon={<SaveIcon />}
+                disabled={
+                  value === 0 || value === null || !ulasan || !selectedDestinasi
+                }
+                onClick={() => {
+                  const anon = checked === true ? "Y" : "N";
+                  debounceInsertReview(
+                    value,
+                    selectedDestinasi.destinasi_id,
+                    id,
+                    ulasan,
+                    anon
+                  );
+                }}
+                // onClick={() => {
+                //   console.log("masuk", selectedDestinasi.destinasi_id);
+                // }}
+              >
+                SIMPAN
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
+        </Box>
+      )}
     </Layout>
   );
 };

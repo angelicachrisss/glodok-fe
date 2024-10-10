@@ -79,7 +79,8 @@ const Destinasi = () => {
       );
       const { data } = responseGetDestinasi.data;
       if (data === null) {
-        displayToast("error", "Data destinasi tidak ada");
+        // displayToast("error", "Data destinasi tidak ada");
+        setListDestinasi(data);
       } else {
         setListDestinasi(data);
         setJenisDestinasiName(data[0].jenisdestinasi_kat.toUpperCase());

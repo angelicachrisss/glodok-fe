@@ -21,13 +21,13 @@ import useToast from "../../../utils/toast";
 import { ceil, debounce } from "lodash";
 import { useRouter } from "next/router";
 
-const CustomStarIcon = styled(StarIcon)(({ theme }) => ({
-  fontSize: 40, // Ganti ukuran sesuai kebutuhan
-}));
-
-const CustomStarBorderIcon = styled(StarBorderIcon)(({ theme }) => ({
-  fontSize: 40, // Ganti ukuran sesuai kebutuhan
-}));
+const hideNama = (name) => {
+  if (name.length <= 2) return name; // Jika nama terlalu pendek
+  const firstLetter = name[0];
+  const lastLetter = name[name.length - 1];
+  const middleSection = "*".repeat(name.length - 2);
+  return `${firstLetter}${middleSection}${lastLetter}`;
+};
 
 const formatDate = (dateString) => {
   // Create a new Date object from the date string
@@ -210,7 +210,9 @@ const DetailReview = () => {
               <Grid item xs={12} sm={6} key={index}>
                 <Paper style={{ padding: 16, marginBottom: 16 }}>
                   <Typography variant="h6" component="div">
-                    {review.reviewer_name}
+                    {review.review_anonyn === "Y"
+                      ? hideNama(review.user_name)
+                      : review.user_name}
                   </Typography>
                   <Rating
                     name="read-only"

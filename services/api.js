@@ -92,6 +92,17 @@ const getBeritaByID = async (id) => {
   return await api.get(`/glodok/v1/data?type=getberitabyid&beritaid=${id}`);
 };
 
+//user
+const loginUser = async (username, pass) => {
+  return await api.post(
+    `/glodok/v1/data?type=submitloginml&username=${username}&pass=${pass}`
+  );
+};
+
+const insertUser = async (payload) => {
+  return await api.post("/glodok/v1/data?type=insertuser", payload);
+};
+
 export default {
   //beranda
   getFotoBeranda,
@@ -118,4 +129,8 @@ export default {
   //berita
   getBerita,
   getBeritaByID,
+
+  //user
+  loginUser,
+  insertUser,
 };

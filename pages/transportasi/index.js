@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Card,
   CardContent,
   CircularProgress,
@@ -93,7 +94,7 @@ const Transportasi = () => {
           </Grid>
         </Grid>
 
-        <Divider sx={{ mb: 2, borderWidth: 0.5, borderColor: "black" }} />
+        <Divider sx={{ mb: 2, borderWidth: 0.5, borderColor: "#B7B7B7" }} />
 
         <Grid container>
           <Grid item xs={12}>
@@ -171,6 +172,30 @@ const Transportasi = () => {
                 ))}
               </Box>
             )}
+
+            <Divider sx={{ mb: 2, borderWidth: 0.5, borderColor: "#B7B7B7" }} />
+
+            <Grid container justifyContent="center" alignItems="center">
+              <Grid item xs={12}>
+                <Typography
+                  variant="h5"
+                  align="center"
+                  sx={{ mb: 2, mt: 3, fontWeight: 600 }}
+                >
+                  PETA TERINTEGRASI
+                </Typography>
+              </Grid>
+
+              <Grid item>
+                <a
+                  href="https://www.jakarta.go.id/informasi-trayek"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button variant="contained">LIHAT PETA DISINI!</Button>
+                </a>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
 
