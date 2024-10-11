@@ -40,8 +40,8 @@ const Review = () => {
   const [selectedDestinasi, setSelectedDestinasi] = useState(null);
   const [checked, setChecked] = useState(false);
 
-  const token = getStorage("ket_masuk");
-  const id = getStorage("userid");
+  const [token, setToken] = useState(null);
+  const [id, setId] = useState(null);
 
   const debounceInsertReview = useCallback(debounce(insertReview, 400), []);
   const debounceGetDestinasi = useCallback(debounce(getDestinasi, 400), []);
@@ -93,6 +93,13 @@ const Review = () => {
 
   useEffect(() => {
     debounceGetDestinasi();
+  }, []);
+
+  useEffect(() => {
+    const storedToken = getStorage("ket_masuk");
+    const userid = getStorage("userid");
+    setToken(storedToken);
+    setId(userid);
   }, []);
 
   return (

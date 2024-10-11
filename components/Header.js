@@ -51,7 +51,12 @@ const Header = () => {
   const router = useRouter();
   const [open, setOpen] = useState(true);
   const [listJenisDestinasi, setListJenisDestinasi] = useState([]);
-  const token = getStorage("ket_masuk");
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const storedToken = getStorage("ket_masuk");
+    setToken(storedToken);
+  }, []);
 
   const debounceJenisDestinasi = useCallback(
     debounce(getJenisDestinasi, 400),
@@ -375,9 +380,7 @@ const Header = () => {
                 }}
               >
                 <Link href="/login" passHref>
-                  <a style={{ textDecoration: "none", color: "inherit" }}>
-                    Login
-                  </a>
+                  <a style={{ color: "inherit" }}>Login</a>
                 </Link>
               </Button>
             ) : (
@@ -391,7 +394,7 @@ const Header = () => {
                   window.location.reload();
                 }}
               >
-                <a style={{ textDecoration: "none", color: "inherit" }}>
+                <a style={{ color: "inherit", textDecoration: "underline" }}>
                   Logout
                 </a>
               </Button>
