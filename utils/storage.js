@@ -1,15 +1,24 @@
 export const getStorage = (key) => {
-  return localStorage.getItem(key);
+  if (typeof window !== "undefined") {
+    return localStorage.getItem(key);
+  }
+  return null; // or a default value
 };
 
 export const setStorage = (key, val) => {
-  localStorage.setItem(key, val);
+  if (typeof window !== "undefined") {
+    localStorage.setItem(key, val);
+  }
 };
 
 export const deleteStorage = (key) => {
-  localStorage.removeItem(key);
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(key);
+  }
 };
 
 export const clearStorage = () => {
-  localStorage.clear();
+  if (typeof window !== "undefined") {
+    localStorage.clear();
+  }
 };

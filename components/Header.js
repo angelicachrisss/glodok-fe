@@ -40,6 +40,9 @@ import ThreeSixtyIcon from "@mui/icons-material/ThreeSixty";
 import api from "../services/api";
 import useToast from "../utils/toast";
 import CircleIcon from "@mui/icons-material/Circle";
+import { getStorage, clearStorage } from "../utils/storage";
+import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const Header = () => {
   const [displayToast] = useToast();
@@ -48,6 +51,12 @@ const Header = () => {
   const router = useRouter();
   const [open, setOpen] = useState(true);
   const [listJenisDestinasi, setListJenisDestinasi] = useState([]);
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const storedToken = getStorage("ket_masuk");
+    setToken(storedToken);
+  }, []);
 
   const debounceJenisDestinasi = useCallback(
     debounce(getJenisDestinasi, 400),
@@ -60,6 +69,7 @@ const Header = () => {
 
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
+    setOpen(false);
   };
 
   const handleDestinasiClick = (event) => {
@@ -214,6 +224,34 @@ const Header = () => {
           </ListItemIcon>
           <ListItemText primary="Review" />
         </ListItemButton>
+
+        {!token ? (
+          <ListItemButton
+            onClick={() => {
+              handleCloseDrawer(); // Tutup drawer saat klik
+              router.push("/login");
+            }}
+          >
+            <ListItemIcon>
+              <LoginIcon />
+            </ListItemIcon>
+            <ListItemText primary="Login" />
+          </ListItemButton>
+        ) : (
+          <ListItemButton
+            onClick={() => {
+              handleCloseDrawer(); // Tutup drawer saat klik
+              displayToast("success", "Berhasil melakukan keluar akun!");
+              clearStorage();
+              window.location.reload();
+            }}
+          >
+            <ListItemIcon>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Logout" />
+          </ListItemButton>
+        )}
       </List>
     </Box>
   );
@@ -331,6 +369,36 @@ const Header = () => {
                 </a>
               </Link>
             </Button>
+
+            {!token ? (
+              <Button
+                color="inherit"
+                aria-controls="destinasi-menu"
+                aria-haspopup="true"
+                onClick={() => {
+                  router.push("/login");
+                }}
+              >
+                <Link href="/login" passHref>
+                  <a style={{ color: "inherit" }}>Login</a>
+                </Link>
+              </Button>
+            ) : (
+              <Button
+                color="inherit"
+                aria-controls="destinasi-menu"
+                aria-haspopup="true"
+                onClick={() => {
+                  displayToast("success", "Berhasil melakukan keluar akun!");
+                  clearStorage();
+                  window.location.reload();
+                }}
+              >
+                <a style={{ color: "inherit", textDecoration: "underline" }}>
+                  Logout
+                </a>
+              </Button>
+            )}
           </Box>
           <IconButton
             edge="start"
