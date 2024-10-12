@@ -227,7 +227,7 @@ const Berita = () => {
                             color="text.secondary"
                             sx={{ mt: 1, textAlign: "justify" }}
                           >
-                            {truncateText(item.berita_desc, 100)}
+                            {truncateText(item.berita_desc, 20)}
                           </Typography>
                           <Typography
                             sx={{ mt: 1 }}

@@ -17,9 +17,11 @@ import MenuItem from "@mui/material/MenuItem";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useRouter } from "next/router";
 import {
+  Avatar,
   Collapse,
   debounce,
   Divider,
+  Grid,
   ListItemButton,
   ListItemIcon,
   ListSubheader,
@@ -43,6 +45,50 @@ import CircleIcon from "@mui/icons-material/Circle";
 import { getStorage, clearStorage } from "../utils/storage";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { styled } from "@mui/material/styles";
+import Badge from "@mui/material/Badge";
+
+const getRandomColor = () => {
+  const letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    backgroundColor: "#44b700",
+    color: "#44b700",
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    "&::after": {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      animation: "ripple 1.2s infinite ease-in-out",
+      border: "1px solid currentColor",
+      content: '""',
+    },
+  },
+  "@keyframes ripple": {
+    "0%": {
+      transform: "scale(.8)",
+      opacity: 1,
+    },
+    "100%": {
+      transform: "scale(2.4)",
+      opacity: 0,
+    },
+  },
+}));
+
+const getFirstLetter = (name) => {
+  return name.charAt(0).toUpperCase(); // Mengambil huruf pertama dan mengubahnya menjadi huruf besar
+};
 
 const Header = () => {
   const [displayToast] = useToast();
@@ -52,16 +98,16 @@ const Header = () => {
   const [open, setOpen] = useState(true);
   const [listJenisDestinasi, setListJenisDestinasi] = useState([]);
   const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    const storedToken = getStorage("ket_masuk");
-    setToken(storedToken);
-  }, []);
+  const [avatarColor, setAvatarColor] = useState("");
+  const [userName, setUserName] = useState("");
+  const [anchorElProfile, setAnchorElProfile] = useState(null);
 
   const debounceJenisDestinasi = useCallback(
     debounce(getJenisDestinasi, 400),
     []
   );
+
+  const debounceGetUser = useCallback(debounce(getUser, 400), []);
 
   const handleClick = () => {
     setOpen(!open);
@@ -78,6 +124,14 @@ const Header = () => {
 
   const handleDestinasiClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleProfileClick = (event) => {
+    setAnchorElProfile(event.currentTarget);
+  };
+
+  const handleProfileClose = () => {
+    setAnchorElProfile(null);
   };
 
   const handleCloseDrawer = () => {
@@ -101,9 +155,44 @@ const Header = () => {
     }
   }
 
+  async function getUser(token, userid) {
+    try {
+      const response = await api.getUser(userid);
+      const { data } = response.data;
+      setUserName(data.user_name);
+      if (token && data.user_id === "") {
+        displayToast("error", "Akun anda telah dihapus!");
+        clearStorage();
+        window.location.reload();
+      }
+    } catch (error) {
+      displayToast("error", "Terjadi kesalahan! Silahkan Refresh Halaman");
+    }
+  }
+
   useEffect(() => {
     debounceJenisDestinasi();
   }, []);
+
+  useEffect(() => {
+    const storedToken = getStorage("ket_masuk");
+    const userid = getStorage("userid");
+    setToken(storedToken);
+    debounceGetUser(storedToken, userid);
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      const storedColor = localStorage.getItem("avatarColor");
+      if (!storedColor) {
+        const newColor = getRandomColor();
+        setAvatarColor(newColor);
+        localStorage.setItem("avatarColor", newColor);
+      } else {
+        setAvatarColor(storedColor);
+      }
+    }
+  }, [token]);
 
   const drawer = (
     <Box sx={{ width: 250 }}>
@@ -224,6 +313,31 @@ const Header = () => {
           </ListItemIcon>
           <ListItemText primary="Review" />
         </ListItemButton>
+
+        {token && (
+          <ListItemButton
+            onClick={() => {
+              handleCloseDrawer(); // Tutup drawer saat klik
+              router.push("/profile");
+            }}
+          >
+            <ListItemIcon>
+              <StyledBadge
+                overlap="circular"
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                variant="dot"
+              >
+                <Avatar
+                  sx={{ bgcolor: avatarColor, width: 30, height: 30 }}
+                  variant="rounded"
+                >
+                  {getFirstLetter(userName)}
+                </Avatar>
+              </StyledBadge>
+            </ListItemIcon>
+            <ListItemText primary="View Profile" />
+          </ListItemButton>
+        )}
 
         {!token ? (
           <ListItemButton
@@ -370,7 +484,58 @@ const Header = () => {
               </Link>
             </Button>
 
-            {!token ? (
+            {token && (
+              <>
+                <Button
+                  color="inherit"
+                  aria-controls="profile-menu"
+                  aria-haspopup="true"
+                  onClick={handleProfileClick} // Tambahkan fungsi klik untuk membuka menu
+                  endIcon={<ArrowDropDownIcon />} // Tambahkan ikon di sini
+                >
+                  <StyledBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    variant="dot"
+                  >
+                    <Avatar sx={{ bgcolor: avatarColor }}>
+                      {getFirstLetter(userName)}
+                    </Avatar>
+                  </StyledBadge>
+                </Button>
+
+                <Menu
+                  id="profile-menu"
+                  anchorEl={anchorElProfile}
+                  open={Boolean(anchorElProfile)}
+                  onClose={handleProfileClose}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      handleProfileClose();
+                      router.push("/profile"); // Pindahkan ke halaman profil
+                    }}
+                  >
+                    View Profile
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleProfileClose();
+                      displayToast(
+                        "success",
+                        "Berhasil melakukan keluar akun!"
+                      );
+                      clearStorage();
+                      window.location.reload();
+                    }}
+                  >
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </>
+            )}
+
+            {!token && (
               <Button
                 color="inherit"
                 aria-controls="destinasi-menu"
@@ -382,21 +547,6 @@ const Header = () => {
                 <Link href="/login" passHref>
                   <a style={{ color: "inherit" }}>Login</a>
                 </Link>
-              </Button>
-            ) : (
-              <Button
-                color="inherit"
-                aria-controls="destinasi-menu"
-                aria-haspopup="true"
-                onClick={() => {
-                  displayToast("success", "Berhasil melakukan keluar akun!");
-                  clearStorage();
-                  window.location.reload();
-                }}
-              >
-                <a style={{ color: "inherit", textDecoration: "underline" }}>
-                  Logout
-                </a>
               </Button>
             )}
           </Box>

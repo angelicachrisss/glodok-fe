@@ -61,12 +61,13 @@ const Login = () => {
 
   return (
     <Layout>
-      <Box style={{ height: "100vh" }}>
+      <Box style={{ height: "auto" }}>
         <Grid
           container
           justifyContent="center"
           alignItems="center"
           style={{ height: "100%" }}
+          sx={{ mt: 6 }}
         >
           <Card elevation={10} style={{ width: 300, borderRadius: " 12px" }}>
             <CardContent>

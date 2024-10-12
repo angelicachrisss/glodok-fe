@@ -71,12 +71,13 @@ const Daftar = () => {
 
   return (
     <Layout>
-      <Box style={{ height: "100vh" }}>
+      <Box style={{ height: "auto" }}>
         <Grid
           container
           justifyContent="center"
           alignItems="center"
           style={{ height: "100%" }}
+          sx={{ mt: 6 }}
         >
           <Card elevation={10} style={{ width: 400, borderRadius: " 12px" }}>
             <CardContent>
@@ -106,6 +107,15 @@ const Daftar = () => {
                   setValue({ ...value, user_id: e.target.value })
                 }
               />
+              {value.user_id.includes(" ") && (
+                <Typography
+                  variant="body1"
+                  sx={{ color: "red", mb: 2 }}
+                  fontWeight={600}
+                >
+                  Username tidak boleh mengandung unsur spasi atau " "
+                </Typography>
+              )}
               <TextField
                 placeholder="Masukkan nama anda"
                 variant="outlined"
@@ -185,7 +195,8 @@ const Daftar = () => {
                   !value.user_name ||
                   !value.user_pass ||
                   !value.user_confirmapass ||
-                  value.user_confirmapass !== value.user_pass
+                  value.user_confirmapass !== value.user_pass ||
+                  value.user_id.includes(" ")
                 }
                 onClick={() => debounceInsertUser(value)}
               >
