@@ -11,7 +11,7 @@ const api = axios.create({
 });
 
 // const api = axios.create({
-//   baseURL: "https://whole-doors-clap.loca.lt",
+//   baseURL: "https://heavy-moments-check.loca.lt",
 //   timeout: 10000,
 // });
 
@@ -103,6 +103,17 @@ const insertUser = async (payload) => {
   return await api.post("/glodok/v1/data?type=insertuser", payload);
 };
 
+const getUser = async (userid) => {
+  return await api.get(`/glodok/v1/data?type=getuser&userid=${userid}`);
+};
+
+const updateUser = async (userid, payload) => {
+  return await api.put(
+    `/glodok/v1/data?type=updateuser&userid=${userid}`,
+    payload
+  );
+};
+
 export default {
   //beranda
   getFotoBeranda,
@@ -133,4 +144,6 @@ export default {
   //user
   loginUser,
   insertUser,
+  getUser,
+  updateUser,
 };

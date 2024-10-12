@@ -139,7 +139,7 @@ const Transportasi = () => {
                                 color="text.secondary"
                               >
                                 Rute:{" "}
-                                {data.rute_no !== ""
+                                {data.rute_no !== "" && data.rute_no !== "-"
                                   ? data.rute_no +
                                     " (" +
                                     data.tujuan_awal +
@@ -191,6 +191,7 @@ const Transportasi = () => {
                   href="https://www.jakarta.go.id/informasi-trayek"
                   target="_blank"
                   rel="noopener noreferrer"
+                  style={{ textDecoration: "none", color: "inherit" }}
                 >
                   <Button variant="contained">LIHAT PETA DISINI!</Button>
                 </a>
