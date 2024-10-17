@@ -163,6 +163,19 @@ const Transportasi = () => {
                                   ""
                                 )}
                               </Typography>
+
+                              {data.rute_link !== "" &&
+                                data.rute_link !== "-" && (
+                                  <Button
+                                    sx={{ mt: 2 }}
+                                    variant="contained"
+                                    onClick={() =>
+                                      window.open(data.rute_link, "_blank")
+                                    }
+                                  >
+                                    Link Detail
+                                  </Button>
+                                )}
                             </CardContent>
                           </Card>
                         </Grid>
