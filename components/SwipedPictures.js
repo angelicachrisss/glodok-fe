@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
-import { Paper, Box, debounce } from "@mui/material";
+import { Paper, Box } from "@mui/material";
 import api from "../services/api";
-import useToast from "../utils/toast";
+import { useMediaQuery } from "@mui/material"; // Import useMediaQuery
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -11,10 +11,10 @@ const SwipedPictures = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [images, setImages] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
+  
+  const isMobile = useMediaQuery("(max-width:600px)"); // Define mobile breakpoint
 
-  const debounceFotoBeranda = useCallback(debounce(getFotoBeranda, 400), []);
-
-  async function getFotoBeranda() {
+  const getFotoBeranda = async () => {
     try {
       const response = await api.getFotoBeranda();
       const { data } = response.data;
@@ -27,14 +27,14 @@ const SwipedPictures = () => {
     } catch (error) {
       // displayToast("error", error.message);
     }
-  }
+  };
 
   useEffect(() => {
     if (!isFetching) {
-      debounceFotoBeranda();
+      getFotoBeranda();
       setIsFetching(true);
     }
-  }, []);
+  }, [isFetching]);
 
   const handleStepChange = (step) => {
     setActiveStep(step);
@@ -61,7 +61,7 @@ const SwipedPictures = () => {
             <div
               key={index}
               style={{
-                height: "400px", // Set fixed height for the container
+                height: isMobile ? "300px" : "900px", // Adjust height based on device
                 position: "relative",
               }}
             >
@@ -70,10 +70,10 @@ const SwipedPictures = () => {
                   style={{
                     width: "100%",
                     height: "100%",
-                    objectFit: "cover", // Maintain aspect ratio
+                    objectFit: "cover",
                     display: "block",
-                    maxWidth: "100%", // Ensure it doesn't exceed container width
-                    maxHeight: "100%", // Ensure it doesn't exceed container height
+                    maxWidth: "100%",
+                    maxHeight: "100%",
                   }}
                   src={img}
                   alt={`Step ${index}`}

@@ -133,7 +133,7 @@ const DetailBerita = () => {
                   style={{
                     width: "100%",
                     height: "auto",
-                    maxHeight: "200px",
+                    maxHeight: "700px",
                     objectFit: "cover",
                     borderRadius: "8px",
                   }}

@@ -44,12 +44,8 @@ const DetailDestinasi = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [destinasiID, setDestinasiID] = useState("");
-  const [destinasiName, setDestinasiName] = useState("");
-  const [keterangan, setKeterangan] = useState("");
   const [listDetailDestinasi, setListDetailDestinasi] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
-  const [jarak, setJarak] = useState(null);
-  const [jenisDestinasiID, setJenisDestinasiID] = useState("");
   const [locationFetched, setLocationFetched] = useState(false); // New state to track location fetching
   const [avgRating, setAvgRating] = useState(0);
   const [totalReviews, setTotalReviews] = useState(0);
@@ -224,7 +220,7 @@ const DetailDestinasi = () => {
                   style={{
                     width: "100%",
                     height: "auto",
-                    maxHeight: "200px",
+                    maxHeight: "700px",
                     objectFit: "cover",
                     borderRadius: "8px",
                   }}
