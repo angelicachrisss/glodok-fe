@@ -61,7 +61,7 @@ const SwipedPictures = () => {
             <div
               key={index}
               style={{
-                height: isMobile ? "300px" : "900px", // Adjust height based on device
+                height: isMobile ? "300px" : "500px", // Adjust height based on device
                 position: "relative",
               }}
             >
