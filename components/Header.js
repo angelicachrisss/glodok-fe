@@ -374,7 +374,7 @@ const Header = () => {
     <>
       <AppBar position="fixed" sx={{ backgroundColor: "#7A3E2C" }}>
         <Toolbar>
-          <Image
+          {/* <Image
             src="/static/logo/pesonaglodok.png"
             alt="Logo"
             width={50}
@@ -383,8 +383,28 @@ const Header = () => {
           />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 2 }}>
             Pesona Glodok
-          </Typography>
-          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
+          </Typography> */}
+          <Link href="/" passHref>
+            <Box
+              sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+            >
+              <Image
+                src="/static/logo/pesonaglodok.png"
+                alt="Logo"
+                width={50}
+                height={50}
+                priority
+              />
+              <Typography
+                variant="h6"
+                component="div"
+                sx={{ ml: 2, color: "inherit" }}
+              >
+                Pesona Glodok
+              </Typography>
+            </Box>
+          </Link>
+          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2, ml: "auto" }}>
             <Button
               color="inherit"
               aria-controls="destinasi-menu"
@@ -554,7 +574,7 @@ const Header = () => {
             edge="start"
             color="inherit"
             aria-label="menu"
-            sx={{ display: { xs: "block", md: "none" } }}
+            sx={{ display: { xs: "block", md: "none" }, ml: "auto" }}
             onClick={handleDrawerToggle}
           >
             <MenuIcon />

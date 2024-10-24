@@ -23,6 +23,7 @@ import api from "../../services/api";
 import useToast from "../../utils/toast";
 import { ceil, debounce } from "lodash";
 import { getStorage } from "../../utils/storage";
+import { useRouter } from "next/router";
 
 const CustomStarIcon = styled(StarIcon)(({ theme }) => ({
   fontSize: 40, // Ganti ukuran sesuai kebutuhan
@@ -33,6 +34,7 @@ const CustomStarBorderIcon = styled(StarBorderIcon)(({ theme }) => ({
 }));
 
 const Review = () => {
+  const router = useRouter();
   const [displayToast] = useToast();
   const [value, setValue] = useState(0);
   const [ulasan, setUlasan] = useState("");
@@ -68,10 +70,11 @@ const Review = () => {
 
       if (data === "Berhasil") {
         displayToast("success", "Berhasil Membuat Review!");
-        setValue(0);
-        setUlasan("");
-        setSelectedDestinasi(null);
-        setChecked(false);
+        router.push(`/destinasi/detailreview/${id}`);
+        // setValue(0);
+        // setUlasan("");
+        // setSelectedDestinasi(null);
+        // setChecked(false);
       } else {
         displayToast("error", "Gagal Membuat Review!");
       }
