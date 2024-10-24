@@ -8,6 +8,7 @@ import {
   CircularProgress,
   debounce,
   Grid,
+  Link,
   Modal,
   TextField,
   Typography,
@@ -349,15 +350,31 @@ const Destinasi = () => {
                             flexDirection: { xs: "column", sm: "row" },
                           }}
                         >
-                          <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                          {/* <Typography variant="body1" sx={{ fontWeight: 600 }}>
                             {item.destinasi_name}
-                          </Typography>
+                          </Typography> */}
+                          <Link
+                            href={`/destinasi/detail/${item.destinasi_id}`}
+                            passHref
+                            sx={{ textDecoration: "none" }} // Add this line
+                          >
+                            <Typography
+                              variant="body1"
+                              sx={{
+                                fontWeight: 600,
+                                cursor: "pointer",
+                                color: "black",
+                              }}
+                            >
+                              {item.destinasi_name}
+                            </Typography>
+                          </Link>
                           <Button
                             size="small"
                             sx={{
                               alignSelf: { xs: "flex-start", sm: "flex-end" },
                             }}
-                            onClick={() => pindahKeDetail(item, "W")}
+                            onClick={() => pindahKeDetail(item)}
                             variant={
                               window.innerWidth < 600 ? "contained" : "text"
                             }

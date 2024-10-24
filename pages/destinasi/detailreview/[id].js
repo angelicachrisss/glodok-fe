@@ -253,6 +253,32 @@ const DetailReview = () => {
           />
         </Box>
       </Box>
+
+      <Grid container>
+        <Grid item xs={0.5}></Grid>
+        <Grid item xs={11}>
+          <Divider sx={{ mb: 2, borderWidth: 0.5, borderColor: "#B7B7B7" }} />
+        </Grid>
+        <Grid item xs={0.5}></Grid>
+      </Grid>
+
+      <Grid container justifyContent="center" alignItems="center" sx={{mb:3}}>
+        <Grid item xs={12}>
+          <Typography
+            variant="h5"
+            align="center"
+            sx={{ mb: 2, mt: 3, fontWeight: 600 }}
+          >
+            JANGAN LUPA UNTUK MEMBERIKAN ULASANMU DISINI!
+          </Typography>
+        </Grid>
+
+        <Grid item>
+          <Button variant="contained" onClick={() => router.push("/review")}>
+            KE HALAMAN REVIEW!
+          </Button>
+        </Grid>
+      </Grid>
     </Layout>
   );
 };

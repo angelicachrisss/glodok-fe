@@ -163,6 +163,19 @@ const Transportasi = () => {
                                   ""
                                 )}
                               </Typography>
+
+                              {data.rute_link !== "" &&
+                                data.rute_link !== "-" && (
+                                  <Button
+                                    sx={{ mt: 2 }}
+                                    variant="contained"
+                                    onClick={() =>
+                                      window.open(data.rute_link, "_blank")
+                                    }
+                                  >
+                                    Link Detail
+                                  </Button>
+                                )}
                             </CardContent>
                           </Card>
                         </Grid>
@@ -188,7 +201,7 @@ const Transportasi = () => {
 
               <Grid item>
                 <a
-                  href="https://www.jakarta.go.id/informasi-trayek"
+                  href="https://jakartamrt.co.id/id/peta-integrasi"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ textDecoration: "none", color: "inherit" }}
