@@ -300,7 +300,7 @@ const DetailDestinasi = () => {
 
         {listDetailDestinasi.destinasi_otentikyn && (
           <Grid sx={{ mb: 2 }}>
-            <Typography sx={{ fontWeight: 600 }}>Label Halal:</Typography>
+            <Typography sx={{ fontWeight: 600 }}>Label Otentik:</Typography>
             {listDetailDestinasi.destinasi_otentikyn === "N" ? (
               <Chip
                 color="error"
