@@ -5,20 +5,20 @@ import axios from "axios";
 //   timeout: 10000,
 // });
 
-// const api = axios.create({
-//   baseURL: "http://localhost:8080",
-//   timeout: 10000,
-// });
+const api = axios.create({
+  baseURL: "http://localhost:8080",
+  timeout: 10000,
+});
 
 // const api = axios.create({
 //   baseURL: "http://103.127.99.8:8080",
 //   timeout: 10000,
 // });
 
-const api = axios.create({
-  baseURL: "https://glodok.icu",
-  timeout: 10000,
-});
+// const api = axios.create({
+//   baseURL: "https://glodok.icu",
+//   timeout: 10000,
+// });
 
 //beranda
 const getSejarahBeranda = async () => {
